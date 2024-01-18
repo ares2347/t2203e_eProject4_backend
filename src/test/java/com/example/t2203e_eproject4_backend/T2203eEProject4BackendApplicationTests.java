@@ -1,4 +1,4 @@
-package com.webapi;
+package com.eproject.webapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
