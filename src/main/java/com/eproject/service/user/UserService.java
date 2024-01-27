@@ -52,4 +52,9 @@ public class UserService implements  IUserService {
         user.setUserRoles(new HashSet<RoleEntity>(Collections.singletonList(UserRolesEnum.BRAND)));
         return _userRepository.save(user);
     }
+
+    @Override
+    public UserEntity getUserByUsername(String username) {
+        return _userRepository.findByEmailOrPhoneNumber(username, "");
+    }
 }

@@ -57,6 +57,7 @@ public class UserEntity extends BaseEntity {
         this.fullName = fullName;
         this.password = password;
         this.brand = brand;
+        this.brand.setUser(this);
     }
 
     public void setUserRoles(Set<RoleEntity> roles){

@@ -1,10 +1,10 @@
 package com.eproject.service.auth;
 import java.util.Date;
-import java.util.UUID;
 
+import com.eproject.data.usermodel.RoleEntity;
 import com.eproject.data.usermodel.UserDetail;
 import com.eproject.data.usermodel.UserEntity;
-import io.jsonwebtoken.Jwt;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,15 +20,21 @@ import com.nimbusds.jwt.SignedJWT;
 @Service
 public class JwtService {
     public static final String USERNAME = "username";
-    public static final String SECRET_KEY = "SECRET123daivclasdfbniawekuioasdojw";
-    public static final int EXPIRE_TIME = 86400000;
-    public String generateTokenLogin(String username) {
+    public static final String ROLE = "username";
+
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    @Value("${jwt.exp}")
+    public int EXPIRE_TIME;
+    public String generateTokenLogin(UserEntity user) {
         String token = null;
         try {
             // Create HMAC signer
             JWSSigner signer = new MACSigner(generateShareSecret());
             JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
-            builder.claim(USERNAME, username);
+            builder.claim(USERNAME, user.getEmail());
+            builder.claim(ROLE, user.getRoles().stream().findFirst().orElse(new RoleEntity()).getName());
             builder.expirationTime(generateExpirationDate());
             JWTClaimsSet claimsSet = builder.build();
             SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
@@ -99,7 +105,7 @@ public class JwtService {
     }
 
     public UserEntity getCurrentUser() {
-        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        var authenticationToken = SecurityContextHolder.getContext().getAuthentication();
         UserDetail userDetail =  (UserDetail)authenticationToken.getPrincipal();
         return userDetail.getUser();
     }

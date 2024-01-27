@@ -9,6 +9,7 @@ import com.eproject.webapi.usercontroller.BookTicketRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class TicketService implements ITicketService {
     public List<TicketEntity> bookTicket(BookTicketBulkRequest request) {
         List<TicketConfigEntity> ticketConfigs = _ticketConfiRepository.findAllById(
                 request.tickets.stream().map(x -> x.ticketConfigId).toList());
-        List<TicketEntity> tickets;
+        List<TicketEntity> tickets = new ArrayList<TicketEntity>();
         for (BookTicketRequest bookTicketRequest : request.tickets) {
             TicketConfigEntity ticketConfig = ticketConfigs.stream().filter(x -> x.getTicketConfigId() == bookTicketRequest.ticketConfigId).findFirst().orElseThrow();
             TicketEntity ticket = new TicketEntity(
@@ -34,7 +35,8 @@ public class TicketService implements ITicketService {
                     bookTicketRequest.customerPhone,
                     ticketConfig
             );
+            tickets.add(ticket);
         }
-        return null;
+        return _ticketRepository.saveAll(tickets);
     }
 }

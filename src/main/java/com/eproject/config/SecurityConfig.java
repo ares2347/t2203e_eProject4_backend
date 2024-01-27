@@ -43,6 +43,7 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
                                 .requestMatchers("/api/brand/**").hasAnyAuthority("ADMIN", "BRAND")
                                 .requestMatchers("/api/user/**").hasAnyAuthority("USER")

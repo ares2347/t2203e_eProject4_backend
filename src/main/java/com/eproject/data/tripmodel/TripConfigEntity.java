@@ -28,6 +28,8 @@ public class TripConfigEntity extends BaseEntity {
         this.arriveAt = arriveAt;
         this.stops = stops;
         this.vehicleConfig = vehicleConfig;
+        this.vehicleConfig.getTripConfigs().add(this);
+        this.vehicleConfig.setTripConfigs(this.getVehicleConfig().getTripConfigs());
         this.ticketConfigs = ticketConfigs;
     }
 
@@ -57,8 +59,8 @@ public class TripConfigEntity extends BaseEntity {
     private VehicleConfigEntity vehicleConfig;
 
     @OneToMany(mappedBy = "tripConfig")
-    List<TripEntity> trips;
+    private List<TripEntity> trips;
 
     @OneToMany(mappedBy = "tripConfig")
-    List<TicketConfigEntity> ticketConfigs;
+    private List<TicketConfigEntity> ticketConfigs;
 }

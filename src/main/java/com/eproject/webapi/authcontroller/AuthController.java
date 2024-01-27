@@ -32,7 +32,8 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) throws Exception{
         try {
             authenticate(request.username, request.password);
-            String token = _jwtService.generateTokenLogin(request.username);
+            UserEntity user = _userService.getUserByUsername(request.username);
+            String token = _jwtService.generateTokenLogin(user);
             return new ResponseEntity<AuthResponse>(new AuthResponse(token), HttpStatus.OK);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -44,7 +45,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         try {
             UserEntity user = _userService.addNewUser(request);
-            String token = _jwtService.generateTokenLogin(user.getEmail());
+            String token = _jwtService.generateTokenLogin(user);
             return new ResponseEntity<AuthResponse>(new AuthResponse(token), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<AuthResponse>(new AuthResponse(), HttpStatus.UNAUTHORIZED);
