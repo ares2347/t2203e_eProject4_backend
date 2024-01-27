@@ -20,6 +20,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleConfigEntity extends BaseEntity {
+
+    public VehicleConfigEntity(VehicleTypeEnum vehicleType, String vehicleName, int seatAmount, List<SeatConfigEntity> seatConfigs, BrandEntity brand, String thumbnailUrl, String imageUrls) {
+        this.vehicleType = vehicleType;
+        this.vehicleName = vehicleName;
+        this.seatAmount = seatAmount;
+        this.seatConfigs = seatConfigs;
+        this.brand = brand;
+        this.thumbnailUrl = thumbnailUrl;
+        this.imageUrls = imageUrls;
+    }
+
     @Id
     @GeneratedValue
     @Column(name = "vehicle_config_id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
@@ -35,8 +46,8 @@ public class VehicleConfigEntity extends BaseEntity {
     @Column(name ="seat_amount")
     private int seatAmount;
 
-    @Column(name = "seat_config")
-    private String seatConfig;
+    @OneToMany(mappedBy = "vehicleConfiguration")
+    List<SeatConfigEntity> seatConfigs;
 
     @OneToMany(mappedBy = "vehicleConfig")
     List<TripConfigEntity> tripConfigs;

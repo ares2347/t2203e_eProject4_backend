@@ -34,4 +34,13 @@ public class BrandEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "brand")
     List<VehicleConfigEntity> vehicleConfigs;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    public BrandEntity(String name) {
+        this.name = name;
+    }
 }

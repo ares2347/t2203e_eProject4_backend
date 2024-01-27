@@ -1,14 +1,11 @@
 package com.eproject.service.trip;
 
-import com.eproject.data.tripmodel.TripConfigDto;
 import com.eproject.data.tripmodel.TripConfigEntity;
 import com.eproject.data.tripmodel.TripEntity;
-import com.eproject.webapi.tripcontroller.CreateTripConfigRequest;
+import com.eproject.webapi.brandcontroller.CreateTripConfigRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Time;
-import java.util.List;
 import java.util.UUID;
 
 public interface ITripService {

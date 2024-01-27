@@ -1,25 +1,21 @@
-package com.eproject.webapi.tripcontroller;
+package com.eproject.webapi.publiccontroller;
 
 import com.eproject.data.tripmodel.TripConfigEntity;
 import com.eproject.data.tripmodel.TripEntity;
 import com.eproject.service.trip.TripService;
-import com.eproject.webapi.authcontroller.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.sql.Time;
 import java.time.OffsetDateTime;
-import java.util.Timer;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/trip")
-
-public class TripController {
+@RequestMapping("/api/public/trip")
+public class PublicTripController {
     @Autowired
     private TripService _tripService;
 
@@ -47,7 +43,7 @@ public class TripController {
         }
     }
 
-    @GetMapping("/list-config")
+    @GetMapping("/config/list")
     public ResponseEntity<Page<TripConfigEntity>> getConfigList(
             @RequestParam(defaultValue = "departAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sort,
@@ -66,7 +62,7 @@ public class TripController {
         }
     }
 
-    @GetMapping("/config-detail/{id}")
+    @GetMapping("/config/detail/{id}")
     public ResponseEntity<TripConfigEntity> getConfigDetail(@PathVariable UUID id) {
         try {
             TripConfigEntity result = _tripService.getTripConfig(id);
@@ -74,10 +70,5 @@ public class TripController {
         } catch (Exception exception) {
             return new ResponseEntity<TripConfigEntity>(new TripConfigEntity(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @PostMapping(path = "/trip-config", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<TripConfigEntity> addTripConfig(@RequestBody CreateTripConfigRequest request){
-
     }
 }

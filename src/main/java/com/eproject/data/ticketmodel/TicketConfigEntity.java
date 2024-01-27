@@ -48,4 +48,11 @@ public class TicketConfigEntity extends BaseEntity {
     @OneToMany(mappedBy = "ticketConfig")
     List<TicketEntity> tickets;
 
+    public TicketConfigEntity(TicketTypeEnum ticketType, BigDecimal price, String seat, String coach, String ticketDescription) {
+        this.ticketType = ticketType;
+        this.price = price;
+        this.seat = seat;
+        this.coach = coach;
+        this.ticketDescription = ticketDescription;
+    }
 }

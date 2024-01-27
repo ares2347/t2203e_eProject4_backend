@@ -55,4 +55,13 @@ public class TicketEntity extends BaseEntity {
     @JoinColumn(name = "payment_id", referencedColumnName = "payment_id")
     private PaymentEntity payment;
 
+    public TicketEntity(String customerName, Date customerDob, String customerIc, String customerEmail, String customerPhone, TicketConfigEntity ticketConfig) {
+        this.customerName = customerName;
+        this.customerDob = customerDob;
+        this.customerIc = customerIc;
+        this.customerEmail = customerEmail;
+        this.customerPhone = customerPhone;
+        this.ticketConfig = ticketConfig;
+        this.total = ticketConfig.getPrice();
+    }
 }

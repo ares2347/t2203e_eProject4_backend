@@ -21,13 +21,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripConfigEntity extends BaseEntity {
-    public TripConfigEntity(String departFrom, Time departAt, String arriveTo, Time arriveAt, String stops, VehicleConfigEntity vehicleConfig) {
+    public TripConfigEntity(String departFrom, Time departAt, String arriveTo, Time arriveAt, String stops, VehicleConfigEntity vehicleConfig, List<TicketConfigEntity> ticketConfigs) {
         this.departFrom = departFrom;
         this.departAt = departAt;
         this.arriveTo = arriveTo;
         this.arriveAt = arriveAt;
         this.stops = stops;
         this.vehicleConfig = vehicleConfig;
+        this.ticketConfigs = ticketConfigs;
     }
 
     @Id

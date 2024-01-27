@@ -1,4 +1,4 @@
-package com.eproject.webapi.tripcontroller;
+package com.eproject.webapi.brandcontroller;
 
 import java.sql.Time;
 import java.util.List;
@@ -11,4 +11,6 @@ public class CreateTripConfigRequest {
     public Time arriveAt;
     public String stops;
     public UUID vehicleId;
+    public List<TicketConfigRequest> ticketConfigs;
 }
+
