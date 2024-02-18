@@ -15,8 +15,7 @@ public class SeedData implements CommandLineRunner {
 
     @Autowired
     private BCryptPasswordEncoder _passwordEncoder;
-
-
+    
     private final String defaultPassword = "1qaz!QAZ";
     @Override
     public void run(String... args) throws Exception {
