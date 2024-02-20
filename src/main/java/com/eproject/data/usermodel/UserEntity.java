@@ -18,7 +18,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(value = { "roles", "authorities" })
+@JsonIgnoreProperties(value = {"roles", "authorities"})
 public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue
@@ -51,6 +51,25 @@ public class UserEntity extends BaseEntity {
         this.password = password;
     }
 
+    public UserEntity(String email, String phoneNumber, String fullName, String password, Set<RoleEntity> roles) {
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.fullName = fullName;
+        this.password = password;
+        this.roles = roles;
+    }
+
+
+    public UserEntity(String email, String phoneNumber, String fullName, String password, Set<RoleEntity> roles, BrandEntity brand) {
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.fullName = fullName;
+        this.password = password;
+        this.roles = roles;
+        this.brand = brand;
+        this.brand.setUser(this);
+    }
+
     public UserEntity(String email, String phoneNumber, String fullName, String password, BrandEntity brand) {
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -60,7 +79,7 @@ public class UserEntity extends BaseEntity {
         this.brand.setUser(this);
     }
 
-    public void setUserRoles(Set<RoleEntity> roles){
+    public void setUserRoles(Set<RoleEntity> roles) {
         this.roles = roles;
     }
 }
