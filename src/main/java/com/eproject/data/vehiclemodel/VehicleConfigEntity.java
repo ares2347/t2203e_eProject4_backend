@@ -16,7 +16,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "vehicle_configs")
+@Table(name = "vehicle_configs", schema = "eproject")
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleConfigEntity extends BaseEntity {

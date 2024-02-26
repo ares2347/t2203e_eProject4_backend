@@ -1,16 +1,17 @@
 package com.eproject.webapi.publiccontroller;
 
 import com.eproject.data.tripmodel.TripConfigEntity;
+import com.eproject.data.tripmodel.TripDto;
 import com.eproject.data.tripmodel.TripEntity;
 import com.eproject.service.trip.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -44,21 +45,19 @@ public class PublicTripController {
     }
 
     @GetMapping("/config/list")
-    public ResponseEntity<Page<TripConfigEntity>> getConfigList(
-            @RequestParam(defaultValue = "departAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sort,
+    public ResponseEntity<Page<TripDto>> getConfigList(
+            @RequestParam(defaultValue = "depart_at") String sortBy,
+            @RequestParam(defaultValue = "asc") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "", required = false) String departFrom,
+            @RequestParam() String departFrom,
             @RequestParam(defaultValue = "", required = false) String arriveTo,
-            @RequestParam(required = false) Time departAt,
-            @RequestParam(required = false) Time arriveAt) {
+            @RequestParam() @DateTimeFormat(pattern = "MM-dd-yyyy") Date departAt) {
         try {
-            departAt = departAt == null ? new Time(OffsetDateTime.now().toEpochSecond()) : departAt;
-            Page<TripConfigEntity> result = _tripService.getConfigList(sortBy, sort, page, size);
-            return new ResponseEntity<Page<TripConfigEntity>>(result, HttpStatus.OK);
+            Page<TripDto> result = _tripService.getList(departFrom, arriveTo, new java.sql.Date(departAt.getTime()), sortBy, sort, page, size);
+            return new ResponseEntity<Page<TripDto>>(result, HttpStatus.OK);
         } catch (Exception exception) {
-            return new ResponseEntity<Page<TripConfigEntity>>(Page.empty(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Page<TripDto>>(Page.empty(), HttpStatus.BAD_REQUEST);
         }
     }
 

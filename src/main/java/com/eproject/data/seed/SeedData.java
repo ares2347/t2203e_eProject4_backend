@@ -28,8 +28,8 @@ public class SeedData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        seedRoleData();
-        seedUserData();
+//        seedRoleData();
+//        seedUserData();
     }
 
     private void seedUserData() {

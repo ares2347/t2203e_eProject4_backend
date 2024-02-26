@@ -14,7 +14,7 @@ import java.util.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "users")
+@Table(name = "users", schema = "eproject")
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)

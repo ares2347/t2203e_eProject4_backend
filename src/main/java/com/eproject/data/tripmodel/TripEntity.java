@@ -10,13 +10,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "trips")
+@Table(name = "trips", schema = "eproject")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripEntity extends BaseEntity {
@@ -37,6 +39,12 @@ public class TripEntity extends BaseEntity {
 
     @Column(name = "driver_name")
     private String driverName;
+
+    @Column(name = "depart_date")
+    private Date departDate;
+
+    @Column(name = "seat_remains")
+    private int seatRemains;
 
     @ManyToOne
     @JoinColumn(name = "trip_config_id")

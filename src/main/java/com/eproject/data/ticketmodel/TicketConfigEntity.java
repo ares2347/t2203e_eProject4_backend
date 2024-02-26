@@ -16,7 +16,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "ticket_configs")
+@Table(name = "ticket_configs", schema = "eproject")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketConfigEntity extends BaseEntity {

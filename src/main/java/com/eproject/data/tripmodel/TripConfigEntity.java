@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.List;
 import java.util.UUID;
@@ -17,17 +18,18 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "trip_configs")
+@Table(name = "trip_configs", schema = "eproject")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripConfigEntity extends BaseEntity {
-    public TripConfigEntity(String departFrom, Time departAt, String arriveTo, Time arriveAt, String stops, VehicleConfigEntity vehicleConfig, List<TicketConfigEntity> ticketConfigs) {
+    public TripConfigEntity(String departFrom, Time departAt, String arriveTo, Time arriveAt, String stops, VehicleConfigEntity vehicleConfig, boolean isRepeated, List<TicketConfigEntity> ticketConfigs) {
         this.departFrom = departFrom;
         this.departAt = departAt;
         this.arriveTo = arriveTo;
         this.arriveAt = arriveAt;
         this.stops = stops;
         this.vehicleConfig = vehicleConfig;
+        this.isRepeated = isRepeated;
         this.vehicleConfig.getTripConfigs().add(this);
         this.vehicleConfig.setTripConfigs(this.getVehicleConfig().getTripConfigs());
         this.ticketConfigs = ticketConfigs;
@@ -52,6 +54,12 @@ public class TripConfigEntity extends BaseEntity {
 
     @Column(name = "stops")
     private String stops;
+
+    @Column(name = "is_repeated")
+    private boolean isRepeated;
+
+    @Column(name = "price")
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "vehicle_config_id")

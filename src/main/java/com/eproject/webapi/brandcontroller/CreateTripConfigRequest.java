@@ -11,6 +11,7 @@ public class CreateTripConfigRequest {
     public Time arriveAt;
     public String stops;
     public UUID vehicleId;
+    public boolean isRepeated;
     public List<TicketConfigRequest> ticketConfigs;
 }
 

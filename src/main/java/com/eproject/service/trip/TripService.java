@@ -2,6 +2,7 @@ package com.eproject.service.trip;
 
 import com.eproject.data.ticketmodel.TicketConfigEntity;
 import com.eproject.data.tripmodel.TripConfigEntity;
+import com.eproject.data.tripmodel.TripDto;
 import com.eproject.data.tripmodel.TripEntity;
 import com.eproject.data.vehiclemodel.SeatConfigEntity;
 import com.eproject.data.vehiclemodel.VehicleConfigEntity;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,6 +43,11 @@ public class TripService implements ITripService {
         Pageable pageable = PageRequest.of(page, size);
         return _tripRepository.findAll(pageable);
     }
+    @Override
+    public Page<TripDto> getList(String departFrom, String arriveTo, Date departAt, String sortBy, String sort, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
+        return _tripRepository.getTripsByParams(departFrom, arriveTo, departAt, pageable);
+    }
 
     @Override
     public TripEntity getDetail(UUID id) {
@@ -53,22 +60,9 @@ public class TripService implements ITripService {
     }
 
     @Override
-    public Page<TripConfigEntity> getConfigList(String sortBy, String sort, int page, int size) {
+    public Page<TripConfigEntity> getConfigList(String departFrom, String arriveTo, Date departAt, String sortBy, String sort, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
-        return _tripConfigRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<TripConfigEntity> getConfigList(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return _tripConfigRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<TripConfigEntity> getConfigList(String sortBy, String sort, int page, int size, String departFrom, String arriveTo, Time departAt, Time arriveAt) {
-
-        Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
-        return _tripConfigRepository.findAll(pageable);
+        return _tripConfigRepository.getTripConfigsByParams(departFrom, arriveTo, departAt, pageable);
     }
 
     @Override
@@ -84,6 +78,7 @@ public class TripService implements ITripService {
                 request.arriveAt,
                 request.stops,
                 vehicleConfig,
+                request.isRepeated,
                 request.ticketConfigs.stream().map(x ->
                         new TicketConfigEntity(
                                 x.ticketType,
