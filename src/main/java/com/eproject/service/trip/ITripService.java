@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 import java.util.UUID;
 
 public interface ITripService {

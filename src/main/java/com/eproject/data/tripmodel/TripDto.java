@@ -1,26 +1,39 @@
 package com.eproject.data.tripmodel;
 
-import com.eproject.data.ticketmodel.TicketEntity;
-import com.eproject.data.vehiclemodel.VehicleEntity;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
+import java.time.LocalTime;
 import java.util.UUID;
 
-public class TripDto {
-    public UUID tripId;
-    public UUID tripConfigId;
-    public TripStatusEnum tripStatus;
-    public Date departDate;
-    public int seatRemains;
-    public String driverEmail;
-    public String driverPhone;
-    public String driverName;
-    public String departFrom;
-    public Time departAt;
-    public String arriveTo;
-    public Time arriveAt;
-    public BigDecimal price;
+public interface TripDto {
+
+    @Value("#{@binaryToUuidConverter.convert(target.tripId)}")
+    UUID getTripId();
+
+    @Value("#{@binaryToUuidConverter.convert(target.tripConfigId)}")
+    UUID getTripConfigId();
+
+    TripStatusEnum getTripStatus();
+
+    Date getDepartDate();
+
+    Integer getSeatRemains();
+
+    String getDriverEmail();
+
+    String getDriverPhone();
+
+    String getDriverName();
+
+    String getDepartFrom();
+
+    LocalTime getDepartAt();
+
+    String getArriveTo();
+
+    LocalTime getArriveAt();
+
+    BigDecimal getPrice();
 }

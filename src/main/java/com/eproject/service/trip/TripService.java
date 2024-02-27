@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class TripService implements ITripService {
         Pageable pageable = PageRequest.of(page, size);
         return _tripRepository.findAll(pageable);
     }
+
     @Override
     public Page<TripDto> getList(String departFrom, String arriveTo, Date departAt, String sortBy, String sort, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
@@ -68,7 +70,7 @@ public class TripService implements ITripService {
     @Override
     public TripConfigEntity addTripConfig(CreateTripConfigRequest request) {
         VehicleConfigEntity vehicleConfig = _vehicleService.getVehicleConfigById(request.vehicleId);
-        if(vehicleConfig == null){
+        if (vehicleConfig == null) {
             return null;
         }
         TripConfigEntity tripConfigEntity = new TripConfigEntity(
@@ -79,6 +81,7 @@ public class TripService implements ITripService {
                 request.stops,
                 vehicleConfig,
                 request.isRepeated,
+                request.price,
                 request.ticketConfigs.stream().map(x ->
                         new TicketConfigEntity(
                                 x.ticketType,
@@ -86,7 +89,7 @@ public class TripService implements ITripService {
                                 x.seat,
                                 x.coach,
                                 x.ticketDescription)).collect(Collectors.toList())
-                );
+        );
 
         return _tripConfigRepository.save(tripConfigEntity);
     }
