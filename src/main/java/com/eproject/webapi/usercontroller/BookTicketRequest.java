@@ -6,8 +6,9 @@ import java.sql.Date;
 import java.util.UUID;
 
 public class BookTicketRequest {
-    public UUID ticketConfigId;
+//    public UUID ticketConfigId;
     public UUID tripId;
+    public UUID tripConfigId;
     public String pickupPoint;
     public String dropoffPoint;
     public String customerName;
@@ -15,6 +16,6 @@ public class BookTicketRequest {
     public String customerIc;
     public String customerEmail;
     public String customerPhone;
-
+    public String seat;
 
 }

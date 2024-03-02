@@ -58,4 +58,9 @@ public class TripEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "trip")
     List<TicketEntity> tickets;
+
+
+    public TripEntity(TripConfigEntity tripConfig) {
+        this.tripConfig = tripConfig;
+    }
 }

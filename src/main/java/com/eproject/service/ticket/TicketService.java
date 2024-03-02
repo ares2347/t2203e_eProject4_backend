@@ -35,20 +35,40 @@ public class TicketService implements ITicketService {
 
     @Override
     public List<TicketEntity> bookTicket(BookTicketBulkRequest request) {
-        List<TicketConfigEntity> ticketConfigs = _ticketConfiRepository.findAllById(
-                request.tickets.stream().map(x -> x.ticketConfigId).toList());
+//        List<TicketConfigEntity> ticketConfigs = _ticketConfiRepository.findAllById(
+//                request.tickets.stream().map(x -> x.ticketConfigId).toList());
         List<TicketEntity> tickets = new ArrayList<TicketEntity>();
         for (BookTicketRequest bookTicketRequest : request.tickets) {
-            TicketConfigEntity ticketConfig = ticketConfigs.stream().filter(x -> x.getTicketConfigId() == bookTicketRequest.ticketConfigId).findFirst().orElseThrow();
-            TicketEntity ticket = new TicketEntity(
-                    bookTicketRequest.customerName,
-                    bookTicketRequest.customerDob,
-                    bookTicketRequest.customerIc,
-                    bookTicketRequest.customerEmail,
-                    bookTicketRequest.customerPhone,
-                    ticketConfig
-            );
-            tickets.add(ticket);
+            TripConfigEntity tripConfigEntity = _tripConfigRepository.getReferenceById(bookTicketRequest.tripConfigId);
+            TripEntity tripEntity = tripConfigEntity.getTrips().stream().filter(trip -> trip.getTripId().equals(bookTicketRequest.tripId)).findAny().orElse(null);;
+            if(tripEntity != null){
+                TicketEntity ticket = new TicketEntity(
+                        bookTicketRequest.customerName,
+                        bookTicketRequest.customerDob,
+                        bookTicketRequest.customerIc,
+                        bookTicketRequest.customerEmail,
+                        bookTicketRequest.customerPhone,
+                        bookTicketRequest.pickupPoint,
+                        bookTicketRequest.dropoffPoint,
+                        tripEntity
+                );
+                tickets.add(ticket);
+            }else{
+                TripEntity trip = new TripEntity();
+                _tripRepository.save(new TripEntity(tripConfigEntity));
+                TicketEntity ticket = new TicketEntity(
+                        bookTicketRequest.customerName,
+                        bookTicketRequest.customerDob,
+                        bookTicketRequest.customerIc,
+                        bookTicketRequest.customerEmail,
+                        bookTicketRequest.customerPhone,
+                        bookTicketRequest.pickupPoint,
+                        bookTicketRequest.dropoffPoint,
+                        trip
+                );
+                tickets.add(ticket);
+            }
+//            TicketConfigEntity ticketConfig = ticketConfigs.stream().filter(x -> x.getTicketConfigId() == bookTicketRequest.ticketConfigId).findFirst().orElseThrow();
         }
         return _ticketRepository.saveAll(tickets);
     }

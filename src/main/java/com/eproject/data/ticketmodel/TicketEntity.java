@@ -70,4 +70,15 @@ public class TicketEntity extends BaseEntity {
         this.ticketConfig = ticketConfig;
         this.total = ticketConfig.getPrice();
     }
+
+    public TicketEntity(String customerName, Date customerDob, String customerIc, String customerEmail, String customerPhone, String pickupPoint, String dropoffPoint, TripEntity trip) {
+        this.customerName = customerName;
+        this.customerDob = customerDob;
+        this.customerIc = customerIc;
+        this.customerEmail = customerEmail;
+        this.customerPhone = customerPhone;
+        this.pickupPoint = pickupPoint;
+        this.dropoffPoint = dropoffPoint;
+        this.trip = trip;
+    }
 }
