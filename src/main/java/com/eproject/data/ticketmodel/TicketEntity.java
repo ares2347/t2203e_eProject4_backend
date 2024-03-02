@@ -41,6 +41,12 @@ public class TicketEntity extends BaseEntity {
     @Column(name = "total")
     private BigDecimal total;
 
+    @Column(name = "pickup_point")
+    private String pickupPoint;
+
+    @Column(name = "dropoff_point")
+    private String dropoffPoint;
+
     @ManyToOne
     @JoinColumn(name = "trip_id")
     @JsonIgnore

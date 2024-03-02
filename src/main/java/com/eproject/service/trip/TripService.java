@@ -1,6 +1,7 @@
 package com.eproject.service.trip;
 
 import com.eproject.data.ticketmodel.TicketConfigEntity;
+import com.eproject.data.ticketmodel.TicketTypeEnum;
 import com.eproject.data.tripmodel.TripConfigEntity;
 import com.eproject.data.tripmodel.TripDto;
 import com.eproject.data.tripmodel.TripEntity;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -73,6 +75,16 @@ public class TripService implements ITripService {
         if (vehicleConfig == null) {
             return null;
         }
+        //TODO: EDIT THIS
+        List<TicketConfigEntity> ticketConfigEntityList = new ArrayList<>();
+        for (int i = 0; i < vehicleConfig.getSeatAmount(); i++) {
+            ticketConfigEntityList.add(new TicketConfigEntity(
+                    TicketTypeEnum.PASSENGER,
+                    request.price,
+                    Integer.toString(i++),
+                    Integer.toString(1),
+                    ""));
+        }
         TripConfigEntity tripConfigEntity = new TripConfigEntity(
                 request.departFrom,
                 request.departAt,
@@ -82,13 +94,7 @@ public class TripService implements ITripService {
                 vehicleConfig,
                 request.isRepeated,
                 request.price,
-                request.ticketConfigs.stream().map(x ->
-                        new TicketConfigEntity(
-                                x.ticketType,
-                                x.price,
-                                x.seat,
-                                x.coach,
-                                x.ticketDescription)).collect(Collectors.toList())
+                ticketConfigEntityList
         );
 
         return _tripConfigRepository.save(tripConfigEntity);

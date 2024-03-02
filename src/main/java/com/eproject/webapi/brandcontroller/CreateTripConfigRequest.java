@@ -15,6 +15,6 @@ public class CreateTripConfigRequest {
     public UUID vehicleId;
     public boolean isRepeated;
     public BigDecimal price;
-    public List<TicketConfigRequest> ticketConfigs;
+//    public List<TicketConfigRequest> ticketConfigs;
 }
 

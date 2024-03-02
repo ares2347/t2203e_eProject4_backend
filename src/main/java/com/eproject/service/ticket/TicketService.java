@@ -2,8 +2,12 @@ package com.eproject.service.ticket;
 
 import com.eproject.data.ticketmodel.TicketConfigEntity;
 import com.eproject.data.ticketmodel.TicketEntity;
+import com.eproject.data.tripmodel.TripConfigEntity;
+import com.eproject.data.tripmodel.TripEntity;
 import com.eproject.repository.ticket.ITicketConfigRepository;
 import com.eproject.repository.ticket.ITicketRepository;
+import com.eproject.repository.trip.ITripConfigRepository;
+import com.eproject.repository.trip.ITripRepository;
 import com.eproject.webapi.usercontroller.BookTicketBulkRequest;
 import com.eproject.webapi.usercontroller.BookTicketRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,16 @@ public class TicketService implements ITicketService {
 
     @Autowired
     ITicketRepository _ticketRepository;
+
+    @Autowired
     ITicketConfigRepository _ticketConfiRepository;
+
+    @Autowired
+    ITripConfigRepository _tripConfigRepository;
+
+    @Autowired
+    ITripRepository _tripRepository;
+
 
     @Override
     public List<TicketEntity> bookTicket(BookTicketBulkRequest request) {
@@ -39,4 +52,22 @@ public class TicketService implements ITicketService {
         }
         return _ticketRepository.saveAll(tickets);
     }
+
+    @Override
+    public TicketEntity bookTicket(BookTicketRequest request) {
+        return null;
+    }
+
+    @Override
+    public List<TicketConfigEntity> getTicketConfigByTripConfigId(UUID tripConfigId) {
+        TripConfigEntity tripConfigEntity = _tripConfigRepository.getReferenceById(tripConfigId);
+        return tripConfigEntity.getTicketConfigs();
+    }
+
+    @Override
+    public List<TicketEntity> getTicketByTripId(UUID tripId) {
+        TripEntity tripEntity = _tripRepository.getReferenceById(tripId);
+        return tripEntity.getTickets();
+    }
+
 }

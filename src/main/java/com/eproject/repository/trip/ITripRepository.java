@@ -25,8 +25,14 @@ public interface ITripRepository extends IBaseRepository<TripEntity> {
             "c.depart_at as departAt, " +
             "c.arrive_to as arriveTo, " +
             "c.arrive_at as arriveAt, " +
-            "c.price as price " +
-            "FROM trip_configs c LEFT JOIN trips t ON c.trip_config_id = t.trip_config_id " +
+            "c.price as price, " +
+            "vc.seat_amount as seatAmount, " +
+            "vc.vehicle_type as vehicleType, " +
+            "b.name as brandName " +
+            "FROM trip_configs c " +
+            "LEFT JOIN trips t ON c.trip_config_id = t.trip_config_id " +
+            "LEFT JOIN brands b ON b.user_id = c.created_by " +
+            "LEFT JOIN vehicle_configs vc ON b.user_id = vc.brand_id AND c.vehicle_config_id = vc.vehicle_config_id " +
             "WHERE c.depart_from LIKE %?1% AND c.arrive_to LIKE %?2% " +
             "AND (c.is_repeated = true or (DATE(c.depart_at) = ?3)) " +
             "AND (t.depart_date is null or DATE(t.depart_date = ?3))" +
