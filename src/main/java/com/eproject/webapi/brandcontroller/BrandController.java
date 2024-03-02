@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,6 +51,16 @@ public class BrandController {
             return new ResponseEntity<Page<VehicleConfigEntity>>(result, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<Page<VehicleConfigEntity>>(Page.empty(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/vehicle/config")
+    public ResponseEntity<List<VehicleConfigEntity>> getVehicleConfigList() {
+        try {
+            List<VehicleConfigEntity> result = _vehicleService.getBrandVegicleConfifgList();
+            return new ResponseEntity<List<VehicleConfigEntity>>(result, HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<List<VehicleConfigEntity>>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
         }
     }
 

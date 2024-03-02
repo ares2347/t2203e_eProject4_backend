@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,11 @@ public class VehicleService implements IVehicleService {
     @Nullable
     public VehicleConfigEntity getVehicleConfigById(UUID id) {
         return _vehicleConfigRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<VehicleConfigEntity> getBrandVegicleConfifgList() {
+        return _vehicleConfigRepository.findAll();
     }
 
     @Override
