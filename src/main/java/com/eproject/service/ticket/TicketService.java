@@ -55,7 +55,7 @@ public class TicketService implements ITicketService {
                 tickets.add(ticket);
             }else{
                 TripEntity trip = new TripEntity();
-                _tripRepository.save(new TripEntity(tripConfigEntity));
+                TripEntity rs = _tripRepository.save(new TripEntity(tripConfigEntity));
                 TicketEntity ticket = new TicketEntity(
                         bookTicketRequest.customerName,
                         bookTicketRequest.customerDob,
@@ -64,7 +64,7 @@ public class TicketService implements ITicketService {
                         bookTicketRequest.customerPhone,
                         bookTicketRequest.pickupPoint,
                         bookTicketRequest.dropoffPoint,
-                        trip
+                        rs
                 );
                 tickets.add(ticket);
             }
