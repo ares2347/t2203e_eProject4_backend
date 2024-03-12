@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,12 +35,12 @@ public class PublicTripController {
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<TripEntity> getTripDetail(@PathVariable UUID id) {
+    public ResponseEntity getTripDetail(@PathVariable UUID id) {
         try {
-            TripEntity result = _tripService.getDetail(id);
-            return new ResponseEntity<TripEntity>(result, HttpStatus.OK);
+            TripDto result = _tripService.getDetail(id);
+            return new ResponseEntity(result, HttpStatus.OK);
         } catch (Exception exception) {
-            return new ResponseEntity<TripEntity>(new TripEntity(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity( null , HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -33,14 +33,43 @@ public class UserController {
     private UserService _userService;
 
     @PostMapping(path = "/ticket/book", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<List<TicketEntity>> bookTicket(@RequestBody BookTicketBulkRequest request){
+    public ResponseEntity<List<TicketEntity>> bookTicket(@RequestBody BookTicketBulkRequest request, HttpServletRequest httpRequest){
         try {
-            List<TicketEntity> result = _ticketService.bookTicket(request);
+            String authHeader = httpRequest.getHeader("Authorization");
+            String username = _jwtService.getUsernameFromToken(authHeader.substring(7));
+            UserEntity user = _userService.getUserByUsername(username);
+            List<TicketEntity> result = _ticketService.bookTicket(request, user.getUserId());
             return new ResponseEntity<List<TicketEntity>>(result, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<List<TicketEntity>>(new ArrayList<TicketEntity>(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/ticket/details/{ticketId}")
+    public ResponseEntity getTicketDetails(@PathVariable UUID ticketId, HttpServletRequest request) {
+        try {
+            String authHeader = request.getHeader("Authorization");
+            String username = _jwtService.getUsernameFromToken(authHeader.substring(7));
+            UserEntity user = _userService.getUserByUsername(username);
+            TicketEntity queryRes = _ticketService.getUserTicketById(user.getUserId(), ticketId);
+            return new ResponseEntity<TicketEntity>(queryRes, HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/ticket/list")
+    public ResponseEntity<List<TicketEntity>> getTickets(HttpServletRequest request) {
+        try {
+            String authHeader = request.getHeader("Authorization");
+            String username = _jwtService.getUsernameFromToken(authHeader.substring(7));
+            UserEntity user = _userService.getUserByUsername(username);
+            List<TicketEntity> queryRes = _ticketService.getUserTicket(user.getUserId());
+            return new ResponseEntity<List<TicketEntity>>(queryRes, HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<List<TicketEntity>>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping("/info")
     public ResponseEntity<UserDto> getUserInfo(HttpServletRequest request) {

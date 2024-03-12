@@ -88,6 +88,11 @@
             <artifactId>spring-security-web</artifactId>
             <version>6.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jobrunr</groupId>
+            <artifactId>jobrunr-spring-boot-starter</artifactId>
+            <version>3.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

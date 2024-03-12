@@ -12,6 +12,7 @@ import com.eproject.repository.trip.ITripRepository;
 import com.eproject.service.vehicle.IVehicleService;
 import com.eproject.service.vehicle.VehicleService;
 import com.eproject.webapi.brandcontroller.CreateTripConfigRequest;
+import org.jobrunr.scheduling.JobScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,8 +58,8 @@ public class TripService implements ITripService {
     }
 
     @Override
-    public TripEntity getDetail(UUID id) {
-        return _tripRepository.findById(id).orElseThrow();
+    public TripDto getDetail(UUID id) {
+        return _tripRepository.getTripById(id);
     }
 
     @Override
@@ -96,7 +100,21 @@ public class TripService implements ITripService {
                 request.price,
                 ticketConfigEntityList
         );
-
-        return _tripConfigRepository.save(tripConfigEntity);
+        var currentDay = LocalDate.now().getDayOfMonth();
+        var dayRemainsInMonth = LocalDate.now().lengthOfMonth() - currentDay;
+        List<TripEntity> trips = new ArrayList<>();
+        if (request.isRepeated) {
+            for (int i = currentDay; i <= dayRemainsInMonth; i++) {
+                if (i == currentDay && request.departAt.isAfter(LocalTime.now())) {
+                    continue;
+                }
+                TripEntity trip = new TripEntity();
+                trip.setSeatRemains(vehicleConfig.getSeatAmount());
+                trip.setDepartDate(Date.valueOf(LocalDate.now().plusDays(i - 1)));
+                trips.add(new TripEntity());
+            }
+        }
+        tripConfigEntity.setTrips(trips);
+        return _tripConfigRepository.saveAndFlush(tripConfigEntity);
     }
 }

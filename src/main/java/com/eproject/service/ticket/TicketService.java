@@ -34,7 +34,7 @@ public class TicketService implements ITicketService {
 
 
     @Override
-    public List<TicketEntity> bookTicket(BookTicketBulkRequest request) {
+    public List<TicketEntity> bookTicket(BookTicketBulkRequest request, UUID userId) {
 //        List<TicketConfigEntity> ticketConfigs = _ticketConfiRepository.findAllById(
 //                request.tickets.stream().map(x -> x.ticketConfigId).toList());
         List<TicketEntity> tickets = new ArrayList<TicketEntity>();
@@ -52,6 +52,7 @@ public class TicketService implements ITicketService {
                         bookTicketRequest.dropoffPoint,
                         tripEntity
                 );
+                ticket.setCreatedBy(userId);
                 tickets.add(ticket);
             }else{
                 TripEntity trip = new TripEntity();
@@ -66,6 +67,7 @@ public class TicketService implements ITicketService {
                         bookTicketRequest.dropoffPoint,
                         rs
                 );
+                ticket.setCreatedBy(userId);
                 tickets.add(ticket);
             }
 //            TicketConfigEntity ticketConfig = ticketConfigs.stream().filter(x -> x.getTicketConfigId() == bookTicketRequest.ticketConfigId).findFirst().orElseThrow();
@@ -88,6 +90,16 @@ public class TicketService implements ITicketService {
     public List<TicketEntity> getTicketByTripId(UUID tripId) {
         TripEntity tripEntity = _tripRepository.getReferenceById(tripId);
         return tripEntity.getTickets();
+    }
+
+    @Override
+    public List<TicketEntity> getUserTicket(UUID userId) {
+        return _ticketRepository.getAllByCreatedBy(userId);
+    }
+
+    @Override
+    public TicketEntity getUserTicketById(UUID userId, UUID ticketId) {
+        return _ticketRepository.getFirstByTicketIdAndCreatedBy(ticketId, userId);
     }
 
 }

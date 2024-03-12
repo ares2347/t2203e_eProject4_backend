@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.sql.Date;
+import java.util.UUID;
 
 public interface ITripRepository extends IBaseRepository<TripEntity> {
     @Query(value = "SELECT " +
@@ -45,4 +46,29 @@ public interface ITripRepository extends IBaseRepository<TripEntity> {
                     "AND (c.is_deleted = false or c.is_deleted is null) AND (t.is_deleted = false or t.is_deleted is null)",
             nativeQuery = true)
     Page<TripDto> getTripsByParams(String departFrom, String arriveTo, Date departAt, Pageable pageable);
+
+    @Query(value = "SELECT TOP 1 " +
+            "t.trip_id as tripId, " +
+            "t.trip_status as tripStatus, " +
+            "t.depart_date as departDate, " +
+            "t.seat_remains as seatRemains, " +
+            "t.driver_email as driverEmail, " +
+            "t.driver_phone as driverPhone, " +
+            "t.driver_name as driverName," +
+            "c.trip_config_id as tripConfigId, " +
+            "c.depart_from as departFrom, " +
+            "c.depart_at as departAt, " +
+            "c.arrive_to as arriveTo, " +
+            "c.arrive_at as arriveAt, " +
+            "c.price as price, " +
+            "vc.seat_amount as seatAmount, " +
+            "vc.vehicle_type as vehicleType, " +
+            "b.name as brandName " +
+            "FROM trip_configs c " +
+            "LEFT JOIN trips t ON c.trip_config_id = t.trip_config_id " +
+            "LEFT JOIN vehicle_configs vc ON c.vehicle_config_id = vc.vehicle_config_id " +
+            "LEFT JOIN brands b ON b.user_id = vc.brand_id " +
+            "WHERE t.trip_id = ?1 AND (c.is_deleted = false or c.is_deleted is null) AND (t.is_deleted = false or t.is_deleted is null)",
+            nativeQuery = true)
+    TripDto getTripById(UUID tripId);
 }

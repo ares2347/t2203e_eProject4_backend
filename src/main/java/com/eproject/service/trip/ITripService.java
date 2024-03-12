@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface ITripService {
     Page<TripEntity> getList(String sortBy, String sort, int page, int size);
     Page<TripEntity> getList(int page, int size);
-    TripEntity getDetail(UUID id);
+    TripDto getDetail(UUID id);
     TripConfigEntity getTripConfig(UUID id);
     TripConfigEntity addTripConfig(CreateTripConfigRequest request);
     Page<TripDto> getList(String departFrom, String arriveTo, Date departAt, String sortBy, String sort, int page, int size);
