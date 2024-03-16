@@ -4,11 +4,10 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.eproject.data.usermodel.RoleEntity;
-import com.eproject.data.usermodel.UserDetail;
-import com.eproject.data.usermodel.UserEntity;
+import com.eproject.data.model.usermodel.RoleEntity;
+import com.eproject.data.model.usermodel.UserDetail;
+import com.eproject.data.model.usermodel.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -38,8 +37,9 @@ public class JwtService {
             // Create HMAC signer
             JWSSigner signer = new MACSigner(generateShareSecret());
             JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
+            //Set claims
             String email = user.getEmail();
-            Set<String> roles = user.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet());
+            Set<String> roles = user.getRoles().stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
             builder.claim(USERNAME, email);
             builder.claim(ROLE, roles);
             builder.expirationTime(generateExpirationDate());
@@ -119,8 +119,13 @@ public class JwtService {
     }
 
     public UserEntity getCurrentUser() {
-        var authenticationToken = SecurityContextHolder.getContext().getAuthentication();
-        UserDetail userDetail = (UserDetail) authenticationToken.getPrincipal();
-        return userDetail.getUser();
+        try {
+            var authenticationToken = SecurityContextHolder.getContext().getAuthentication();
+            UserDetail userDetail = (UserDetail) authenticationToken.getPrincipal();
+            return userDetail.getUser();
+        } catch (Exception ex) {
+            return null;
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package com.eproject.config;
 
+import com.eproject.data.model.usermodel.UserRolesEnum;
 import com.eproject.service.user.UserDetailService;
 import org.jobrunr.jobs.mappers.JobMapper;
 import org.jobrunr.storage.InMemoryStorageProvider;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -63,9 +65,9 @@ public class SecurityConfig {
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
-                                .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
-                                .requestMatchers("/api/brand/**").hasAnyAuthority("ADMIN", "BRAND")
-                                .requestMatchers("/api/user/**").hasAnyAuthority("USER", "ADMIN", "BRAND")
+                                .requestMatchers("/api/admin/**").hasAnyAuthority(UserRolesEnum.ADMIN.roleName)
+                                .requestMatchers("/api/brand/**").hasAnyAuthority(UserRolesEnum.ADMIN.roleName, UserRolesEnum.BRAND.roleName)
+                                .requestMatchers("/api/user/**").hasAnyAuthority(UserRolesEnum.ADMIN.roleName, UserRolesEnum.BRAND.roleName,UserRolesEnum.USER.roleName)
                                 .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

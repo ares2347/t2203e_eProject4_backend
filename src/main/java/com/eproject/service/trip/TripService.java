@@ -1,120 +1,204 @@
 package com.eproject.service.trip;
 
-import com.eproject.data.ticketmodel.TicketConfigEntity;
-import com.eproject.data.ticketmodel.TicketTypeEnum;
-import com.eproject.data.tripmodel.TripConfigEntity;
-import com.eproject.data.tripmodel.TripDto;
-import com.eproject.data.tripmodel.TripEntity;
-import com.eproject.data.vehiclemodel.SeatConfigEntity;
-import com.eproject.data.vehiclemodel.VehicleConfigEntity;
-import com.eproject.repository.trip.ITripConfigRepository;
-import com.eproject.repository.trip.ITripRepository;
-import com.eproject.service.vehicle.IVehicleService;
-import com.eproject.service.vehicle.VehicleService;
-import com.eproject.webapi.brandcontroller.CreateTripConfigRequest;
-import org.jobrunr.scheduling.JobScheduler;
+import com.eproject.data.dto.PageDto;
+import com.eproject.data.dto.trip.RouteDto;
+import com.eproject.data.dto.trip.TripDto;
+import com.eproject.data.model.brandmodel.BrandEntity;
+import com.eproject.data.model.tripmodel.RouteEntity;
+import com.eproject.data.model.tripmodel.TripEntity;
+import com.eproject.data.model.tripmodel.TripStatusEnum;
+import com.eproject.data.model.usermodel.UserEntity;
+import com.eproject.data.model.vehiclemodel.VehicleEntity;
+import com.eproject.repository.RouteRepository;
+import com.eproject.repository.TripRepository;
+import com.eproject.repository.UserRepository;
+import com.eproject.repository.VehicleRepository;
+import com.eproject.service.auth.JwtService;
+import com.eproject.webapi.brandcontroller.CreateRouteRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 @Service
 public class TripService implements ITripService {
     @Autowired
-    private ITripRepository _tripRepository;
+    private RouteRepository _routeRepository;
     @Autowired
-    private ITripConfigRepository _tripConfigRepository;
+    private TripRepository _tripRepository;
     @Autowired
-    private VehicleService _vehicleService;
+    private VehicleRepository _vehicleRepository;
+    @Autowired
+    private UserRepository _userRepository;
+    @Autowired
+    private JwtService _jwtService;
+    @Autowired
+    private ModelMapper _mapper;
 
     @Override
-    public Page<TripEntity> getList(String sortBy, String sort, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
-        return _tripRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<TripEntity> getList(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return _tripRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<TripDto> getList(String departFrom, String arriveTo, Date departAt, String sortBy, String sort, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
-        return _tripRepository.getTripsByParams(departFrom, arriveTo, departAt, pageable);
-    }
-
-    @Override
-    public TripDto getDetail(UUID id) {
-        return _tripRepository.getTripById(id);
-    }
-
-    @Override
-    public TripConfigEntity getTripConfig(UUID id) {
-        return _tripConfigRepository.findById(id).orElseThrow();
-    }
-
-    @Override
-    public Page<TripConfigEntity> getConfigList(String departFrom, String arriveTo, Date departAt, String sortBy, String sort, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, sort.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
-        return _tripConfigRepository.getTripConfigsByParams(departFrom, arriveTo, departAt, pageable);
-    }
-
-    @Override
-    public TripConfigEntity addTripConfig(CreateTripConfigRequest request) {
-        VehicleConfigEntity vehicleConfig = _vehicleService.getVehicleConfigById(request.vehicleId);
-        if (vehicleConfig == null) {
+    public RouteEntity createNewRoute(CreateRouteRequest request) {
+        try {
+            UserEntity user = _jwtService.getCurrentUser();
+            Optional<UserEntity> userEntity = _userRepository.findById(user.getUserId());
+            if (userEntity.isPresent()) {
+                BrandEntity brand = userEntity.get().getBrand();
+                RouteEntity route = _mapper.map(request, RouteEntity.class);
+                route.setBrand(brand);
+                RouteEntity res = _routeRepository.saveAndFlush(route);
+                this.addTripToRoute(res);
+                return res;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
             return null;
         }
-        //TODO: EDIT THIS
-        List<TicketConfigEntity> ticketConfigEntityList = new ArrayList<>();
-        for (int i = 0; i < vehicleConfig.getSeatAmount(); i++) {
-            ticketConfigEntityList.add(new TicketConfigEntity(
-                    TicketTypeEnum.PASSENGER,
-                    request.price,
-                    Integer.toString(i++),
-                    Integer.toString(1),
-                    ""));
-        }
-        TripConfigEntity tripConfigEntity = new TripConfigEntity(
-                request.departFrom,
-                request.departAt,
-                request.arriveTo,
-                request.arriveAt,
-                request.stops,
-                vehicleConfig,
-                request.isRepeated,
-                request.price,
-                ticketConfigEntityList
-        );
-        var currentDay = LocalDate.now().getDayOfMonth();
-        var dayRemainsInMonth = LocalDate.now().lengthOfMonth() - currentDay;
+    }
+    private List<TripEntity> addTripToRoute(RouteEntity route){
         List<TripEntity> trips = new ArrayList<>();
-        if (request.isRepeated) {
-            for (int i = currentDay; i <= dayRemainsInMonth; i++) {
-                if (i == currentDay && request.departAt.isAfter(LocalTime.now())) {
-                    continue;
-                }
-                TripEntity trip = new TripEntity();
-                trip.setSeatRemains(vehicleConfig.getSeatAmount());
-                trip.setDepartDate(Date.valueOf(LocalDate.now().plusDays(i - 1)));
-                trips.add(new TripEntity());
+        List<LocalDate> remainsDaysOfMonth = LocalDate.now()
+                .datesUntil(LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()))
+                .toList();
+        //Get vehicle and add routes??????
+        int totalRouteDuration =
+                (route.getRouteDuration().getHour() * 60 * 60 + route.getRouteDuration().getMinute() * 60 + route.getRouteDuration().getSecond()) +
+                        (route.getGapDurationBetweenTrip().getHour() * 60 * 60 + route.getGapDurationBetweenTrip().getMinute() * 60 + route.getGapDurationBetweenTrip().getSecond());
+        int gapDurationBetweenRoute = route.getGapDurationBetweenRoute().getHour()*60*60 + route.getGapDurationBetweenRoute().getMinute()*60 + route.getGapDurationBetweenRoute().getSecond();
+        int numberOfVehicleNeededForOneCycle = (BigDecimal.valueOf(totalRouteDuration).divide(BigDecimal.valueOf(gapDurationBetweenRoute)).setScale(0, RoundingMode.FLOOR)).intValueExact();
+
+        LinkedList<VehicleEntity> vehiclesInStart = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getStartStation()));
+        LinkedList<VehicleEntity> vehiclesInEnd = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getEndStation()));
+
+        if((long) vehiclesInStart.size() >= numberOfVehicleNeededForOneCycle && (long) vehiclesInEnd.size() >= numberOfVehicleNeededForOneCycle){
+            for (LocalDate day : remainsDaysOfMonth) {
+                LocalTime startTimeFromStart = route.getEarliestStartTimeFromStart();
+                LocalTime latestStartTimeFromStart = route.getLatestStartTimeFromStart();
+                do {
+                    if (day.isAfter(LocalDate.now()) || (day.isEqual(LocalDate.now()) && startTimeFromStart.isAfter(LocalTime.now()))) {
+                        VehicleEntity startVehicle = vehiclesInStart.removeFirst();
+                        vehiclesInEnd.addLast(startVehicle);
+                        trips.add(new TripEntity(
+                                TripStatusEnum.WAITING,
+                                route.getStartCity(),
+                                route.getStartStation(),
+                                route.getEndCity(),
+                                route.getEndStation(),
+                                startTimeFromStart,
+                                day,
+                                route.getRouteDuration(),
+                                route.getStationsMapping(),
+                                route.getVehicleType(),
+                                route.getSeatAmount(),
+                                route.getBrand(),
+                                startVehicle
+                        ));
+                    }
+                    startTimeFromStart = startTimeFromStart
+                            .plusHours(route.getGapDurationBetweenRoute().getHour())
+                            .plusMinutes(route.getGapDurationBetweenRoute().getMinute())
+                            .plusSeconds(route.getGapDurationBetweenRoute().getSecond());
+                } while (!startTimeFromStart.isAfter(latestStartTimeFromStart));
+
+                LocalTime startTimeFromEnd = route.getEarliestStartTimeFromEnd();
+                LocalTime latestStartTimeFromEnd = route.getLatestStartTimeFromEnd();
+                do {
+                    if (day.isAfter(LocalDate.now()) || (day.isEqual(LocalDate.now()) && startTimeFromEnd.isAfter(LocalTime.now()))) {
+                        VehicleEntity endVehicle = vehiclesInEnd.removeFirst();
+                        vehiclesInStart.addLast(endVehicle);
+                        trips.add(new TripEntity(
+                                TripStatusEnum.WAITING,
+                                route.getStartCity(),
+                                route.getStartStation(),
+                                route.getEndCity(),
+                                route.getEndStation(),
+                                startTimeFromEnd,
+                                day,
+                                route.getRouteDuration(),
+                                route.getStationsMapping(),
+                                route.getVehicleType(),
+                                route.getSeatAmount(),
+                                route.getBrand(),
+                                new VehicleEntity()
+                        ));
+                    }
+                    startTimeFromEnd = startTimeFromEnd
+                            .plusHours(route.getGapDurationBetweenRoute().getHour())
+                            .plusMinutes(route.getGapDurationBetweenRoute().getMinute())
+                            .plusSeconds(route.getGapDurationBetweenRoute().getSecond());
+                } while (!startTimeFromEnd.isAfter(latestStartTimeFromEnd));
             }
         }
-        tripConfigEntity.setTrips(trips);
-        return _tripConfigRepository.saveAndFlush(tripConfigEntity);
+        return _tripRepository.saveAllAndFlush(trips);
     }
+    @Override
+    public PageDto<RouteDto> getRoutesByCurrentUser(int page, int size) {
+        try {
+            UserEntity user = _jwtService.getCurrentUser();
+            Optional<UserEntity> userEntity = _userRepository.findById(user.getUserId());
+            if (userEntity.isPresent()) {
+                BrandEntity brand = userEntity.get().getBrand();
+                Pageable pagination = PageRequest.of(page, size);
+                Page<RouteEntity> queryResult = _routeRepository.findAllByBrand(brand, pagination);
+                return new PageDto<RouteDto>(
+                        queryResult.get().map(x -> _mapper.map(x, RouteDto.class)).toList(),
+                        queryResult.getNumber(),
+                        queryResult.getSize(),
+                        queryResult.getTotalPages(),
+                        queryResult.getNumberOfElements());
+            } else {
+                return PageDto.empty();
+            }
+        } catch (Exception ex) {
+            return PageDto.empty();
+        }
+    }
+    @Override
+    public PageDto<TripDto> getTripsByCurrentUser(int page, int size) {
+        try {
+            UserEntity user = _jwtService.getCurrentUser();
+            Optional<UserEntity> userEntity = _userRepository.findById(user.getUserId());
+            if (userEntity.isPresent()) {
+                BrandEntity brand = userEntity.get().getBrand();
+                Pageable pagination = PageRequest.of(page, size);
+                Page<TripEntity> queryResult = _tripRepository.findAllByBrand(brand, pagination);
+                return new PageDto<TripDto>(
+                        queryResult.get().map(x -> _mapper.map(x, TripDto.class)).toList(),
+                        queryResult.getNumber(),
+                        queryResult.getSize(),
+                        queryResult.getTotalPages(),
+                        queryResult.getNumberOfElements());
+            } else {
+                return PageDto.empty();
+            }
+        } catch (Exception ex) {
+            return PageDto.empty();
+        }
+    }
+    @Override
+    public PageDto<TripDto> getTripsByLocationAndDate(LocalDate startDate, String startCity, String endCity, String vehicleType, int page, int size) {
+        try {
+            Pageable pagination = PageRequest.of(page, size);
+            Page<TripEntity> queryResult = _tripRepository.findAllByStartDateAndStartCityAndEndCityAndVehicleTypeContains(
+                    startDate, startCity, endCity, vehicleType, pagination);
+            return new PageDto<TripDto>(
+                    queryResult.get().map(x -> _mapper.map(x, TripDto.class)).toList(),
+                    queryResult.getNumber(),
+                    queryResult.getSize(),
+                    queryResult.getTotalPages(),
+                    queryResult.getNumberOfElements());
+        } catch (Exception ex) {
+            return PageDto.empty();
+        }
+    }
+
+
 }

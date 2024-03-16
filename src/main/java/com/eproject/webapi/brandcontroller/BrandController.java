@@ -1,76 +1,83 @@
 package com.eproject.webapi.brandcontroller;
 
-import com.eproject.data.tripmodel.TripConfigEntity;
-import com.eproject.data.usermodel.UserEntity;
-import com.eproject.data.vehiclemodel.VehicleConfigEntity;
+import com.eproject.data.dto.PageDto;
+import com.eproject.data.dto.trip.RouteDto;
+import com.eproject.data.model.tripmodel.RouteEntity;
+import com.eproject.data.model.usermodel.RoleEntity;
+import com.eproject.data.model.usermodel.UserEntity;
+import com.eproject.data.model.usermodel.UserRolesEnum;
 import com.eproject.service.trip.TripService;
 import com.eproject.service.user.BrandService;
-import com.eproject.service.user.IBrandService;
 import com.eproject.service.vehicle.VehicleService;
+import com.eproject.webapi.BaseResponse;
+import com.eproject.webapi.authcontroller.AuthResponse;
 import com.eproject.webapi.authcontroller.RegisterRequest;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/brand")
 public class BrandController {
     @Autowired
-    BrandService _brandService;
-
-    @Autowired
-    private VehicleService _vehicleService;
-
-    @Autowired
     private TripService _tripService;
 
-    @PostMapping(path = "/vehicle/config", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<VehicleConfigEntity> addVehicleConfig(@RequestBody CreateVehicleConfigRequest request){
+    @Autowired
+    private ModelMapper _mapper;
+
+    //region Routes
+    @PostMapping(path = "/trip/create-route", consumes = "application/json", produces = "application/json")
+    public ResponseEntity createRoute(@RequestBody @Valid CreateRouteRequest request, BindingResult bindingResult) {
         try {
-            VehicleConfigEntity result = _vehicleService.addConfig(request);
-            return new ResponseEntity<VehicleConfigEntity>(result, HttpStatus.OK);
-        } catch (Exception exception) {
-            return new ResponseEntity<VehicleConfigEntity>(new VehicleConfigEntity(), HttpStatus.BAD_REQUEST);
+            RouteEntity routeEntity = _tripService.createNewRoute(request);
+            RouteDto result = _mapper.map(routeEntity, RouteDto.class);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Tạo lộ trình thất bại."), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/vehicle/config/list")
-    public ResponseEntity<Page<VehicleConfigEntity>> getVehicleConfigList(
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sort,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    @GetMapping(path = "/trip/get-routes")
+    public ResponseEntity getRoutes(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         try {
-            Page<VehicleConfigEntity> result = _vehicleService.getBrandVegicleConfifgList(sortBy, sort, page, size);
-            return new ResponseEntity<Page<VehicleConfigEntity>>(result, HttpStatus.OK);
-        } catch (Exception exception) {
-            return new ResponseEntity<Page<VehicleConfigEntity>>(Page.empty(), HttpStatus.BAD_REQUEST);
+            PageDto<RouteDto> result = _tripService.getRoutesByCurrentUser(page, size);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Lỗi xảy ra khi tìm kiếm lộ trình."), HttpStatus.BAD_REQUEST);
         }
     }
+    //endregion
 
-    @GetMapping("/vehicle/config")
-    public ResponseEntity<List<VehicleConfigEntity>> getVehicleConfigList() {
-        try {
-            List<VehicleConfigEntity> result = _vehicleService.getBrandVegicleConfifgList();
-            return new ResponseEntity<List<VehicleConfigEntity>>(result, HttpStatus.OK);
-        } catch (Exception exception) {
-            return new ResponseEntity<List<VehicleConfigEntity>>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
-        }
-    }
+    //region Trips
 
-    @PostMapping(path = "/trip/config", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<TripConfigEntity> addTripConfig(@RequestBody CreateTripConfigRequest request){
+    @GetMapping(path = "/trip/get-trips")
+    public ResponseEntity getTrips(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         try {
-            TripConfigEntity result = _tripService.addTripConfig(request);
-            return new ResponseEntity<TripConfigEntity>(result, HttpStatus.OK);
-        } catch (Exception exception) {
-            return new ResponseEntity<TripConfigEntity>(new TripConfigEntity(), HttpStatus.BAD_REQUEST);
+            PageDto<RouteDto> result = _tripService.getRoutesByCurrentUser(page, size);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Lỗi xảy ra khi tìm kiếm lộ trình."), HttpStatus.BAD_REQUEST);
         }
     }
+    //endregion
+
 }

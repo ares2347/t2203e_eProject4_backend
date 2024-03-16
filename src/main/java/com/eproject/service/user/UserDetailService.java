@@ -1,8 +1,8 @@
 package com.eproject.service.user;
 
-import com.eproject.data.usermodel.UserDetail;
-import com.eproject.data.usermodel.UserEntity;
-import com.eproject.repository.user.IUserRepository;
+import com.eproject.data.model.usermodel.UserDetail;
+import com.eproject.data.model.usermodel.UserEntity;
+import com.eproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 public class UserDetailService implements UserDetailsService {
 
     @Autowired
-    private IUserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmailOrPhoneNumber(identifier, identifier);
+        UserEntity user = userRepository.findFirstByEmailOrPhoneNumber(identifier, identifier);
         return new UserDetail(user);
     }
 }

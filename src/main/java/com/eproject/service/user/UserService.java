@@ -1,60 +1,56 @@
 package com.eproject.service.user;
 
-import com.eproject.data.usermodel.BrandEntity;
-import com.eproject.data.usermodel.RoleEntity;
-import com.eproject.data.usermodel.UserEntity;
-import com.eproject.data.usermodel.UserRolesEnum;
-import com.eproject.repository.user.IBrandRepository;
-import com.eproject.repository.user.IUserRepository;
-import com.eproject.webapi.admincontroller.CreateBrandAccountRequest;
+import com.eproject.data.dto.user.UserDto;
+import com.eproject.data.model.usermodel.RoleEntity;
+import com.eproject.data.model.usermodel.UserEntity;
+import com.eproject.repository.RoleRepository;
+import com.eproject.repository.UserRepository;
+import com.eproject.service.auth.JwtService;
 import com.eproject.webapi.authcontroller.RegisterRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
-public class UserService implements  IUserService {
+public class UserService implements IUserService {
     @Autowired
-    private IUserRepository _userRepository;
-
+    private UserRepository _userRepository;
+    @Autowired
+    private RoleRepository _roleRepository;
     @Autowired
     private BCryptPasswordEncoder _passwordEncoder;
+    @Autowired
+    private ModelMapper _modelMapper;
+    @Autowired
+    private JwtService _jwtService;
 
     @Override
-    public UserEntity addNewUser(RegisterRequest request) {
+    public UserEntity addNewUser(RegisterRequest request, Set<RoleEntity> roles) {
         String encoded = _passwordEncoder.encode(request.password);
+        Set<RoleEntity> roleEntities = _roleRepository.getAllByRoleNameIn(roles.stream().map(RoleEntity::getRoleName).collect(Collectors.toSet()));
         UserEntity user = new UserEntity(
                 request.email,
                 request.phone,
                 request.fullName,
                 encoded
         );
-        user.setUserRoles(new HashSet<RoleEntity>(Collections.singletonList(UserRolesEnum.USER)));
-        return _userRepository.save(user);
-    }
-
-    @Override
-    public UserEntity addNewBrand(CreateBrandAccountRequest request) {
-        String defaultPassword = "password";
-        String encoded = _passwordEncoder.encode(defaultPassword);
-        UserEntity user = new UserEntity(
-                request.email,
-                request.phone,
-                request.name,
-                encoded,
-                new BrandEntity(request.name)
-        );
-        user.setUserRoles(new HashSet<RoleEntity>(Collections.singletonList(UserRolesEnum.BRAND)));
-        return _userRepository.save(user);
+        user.setUserRoles(roleEntities);
+        return _userRepository.saveAndFlush(user);
     }
 
     @Override
     public UserEntity getUserByUsername(String username) {
-        return _userRepository.findByEmailOrPhoneNumber(username, "");
+        return _userRepository.findFirstByEmailOrPhoneNumber(username, "");
+    }
+
+    @Override
+    public UserDto getCurrentUserInfo() {
+        UserEntity user = _jwtService.getCurrentUser();
+        return _modelMapper.map(user, UserDto.class);
     }
 }
