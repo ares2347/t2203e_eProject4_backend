@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -63,22 +64,23 @@ public class TripService implements ITripService {
             return null;
         }
     }
-    private List<TripEntity> addTripToRoute(RouteEntity route){
+
+    public List<TripEntity> addTripToRoute(RouteEntity route) {
         List<TripEntity> trips = new ArrayList<>();
         List<LocalDate> remainsDaysOfMonth = LocalDate.now()
-                .datesUntil(LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()))
+                .datesUntil(LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1))
                 .toList();
         //Get vehicle and add routes??????
         int totalRouteDuration =
                 (route.getRouteDuration().getHour() * 60 * 60 + route.getRouteDuration().getMinute() * 60 + route.getRouteDuration().getSecond()) +
                         (route.getGapDurationBetweenTrip().getHour() * 60 * 60 + route.getGapDurationBetweenTrip().getMinute() * 60 + route.getGapDurationBetweenTrip().getSecond());
-        int gapDurationBetweenRoute = route.getGapDurationBetweenRoute().getHour()*60*60 + route.getGapDurationBetweenRoute().getMinute()*60 + route.getGapDurationBetweenRoute().getSecond();
+        int gapDurationBetweenRoute = route.getGapDurationBetweenRoute().getHour() * 60 * 60 + route.getGapDurationBetweenRoute().getMinute() * 60 + route.getGapDurationBetweenRoute().getSecond();
         int numberOfVehicleNeededForOneCycle = (BigDecimal.valueOf(totalRouteDuration).divide(BigDecimal.valueOf(gapDurationBetweenRoute)).setScale(0, RoundingMode.FLOOR)).intValueExact();
 
         LinkedList<VehicleEntity> vehiclesInStart = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getStartStation()));
         LinkedList<VehicleEntity> vehiclesInEnd = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getEndStation()));
 
-        if((long) vehiclesInStart.size() >= numberOfVehicleNeededForOneCycle && (long) vehiclesInEnd.size() >= numberOfVehicleNeededForOneCycle){
+        if ((long) vehiclesInStart.size() >= numberOfVehicleNeededForOneCycle && (long) vehiclesInEnd.size() >= numberOfVehicleNeededForOneCycle) {
             for (LocalDate day : remainsDaysOfMonth) {
                 LocalTime startTimeFromStart = route.getEarliestStartTimeFromStart();
                 LocalTime latestStartTimeFromStart = route.getLatestStartTimeFromStart();
@@ -139,6 +141,7 @@ public class TripService implements ITripService {
         }
         return _tripRepository.saveAllAndFlush(trips);
     }
+
     @Override
     public PageDto<RouteDto> getRoutesByCurrentUser(int page, int size) {
         try {
@@ -161,6 +164,7 @@ public class TripService implements ITripService {
             return PageDto.empty();
         }
     }
+
     @Override
     public PageDto<TripDto> getTripsByCurrentUser(int page, int size) {
         try {
@@ -183,6 +187,7 @@ public class TripService implements ITripService {
             return PageDto.empty();
         }
     }
+
     @Override
     public PageDto<TripDto> getTripsByLocationAndDate(LocalDate startDate, String startCity, String endCity, String vehicleType, int page, int size) {
         try {
@@ -200,5 +205,15 @@ public class TripService implements ITripService {
         }
     }
 
-
+    @Scheduled(cron = "0 0 0 1 * *")
+    public void generateMonthlyTrips() {
+        try{
+            List<RouteEntity> routeEntities = _routeRepository.findAll();
+            for (RouteEntity route : routeEntities) {
+                addTripToRoute(route);
+            }
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+    }
 }

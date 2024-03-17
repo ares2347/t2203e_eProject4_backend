@@ -32,7 +32,7 @@ public class BrandEntity extends BaseEntity {
     private String hotline;
 
     @Column(name = "email", unique = true, nullable = false)
-    @Pattern(regexp = "[a-z0-9]+@[a-z]+\\.[a-z]{2,3}",
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
             message = "Email must be a valid email address")
     private String email;
 

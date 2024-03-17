@@ -2,9 +2,6 @@ package com.eproject.config;
 
 import com.eproject.data.model.usermodel.UserRolesEnum;
 import com.eproject.service.user.UserDetailService;
-import org.jobrunr.jobs.mappers.JobMapper;
-import org.jobrunr.storage.InMemoryStorageProvider;
-import org.jobrunr.storage.StorageProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

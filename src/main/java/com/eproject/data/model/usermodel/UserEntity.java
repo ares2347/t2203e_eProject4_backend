@@ -25,7 +25,7 @@ public class UserEntity extends BaseEntity {
     private UUID userId;
 
     @Column(name = "email", unique = true, nullable = false)
-    @Pattern(regexp = "[a-z0-9]+@[a-z]+\\.[a-z]{2,3}",
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
             message = "Email must be a valid email address")
     private String email;
 
@@ -40,7 +40,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

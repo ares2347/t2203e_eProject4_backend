@@ -6,6 +6,7 @@ import com.eproject.data.model.usermodel.UserEntity;
 import com.eproject.repository.RoleRepository;
 import com.eproject.repository.UserRepository;
 import com.eproject.service.auth.JwtService;
+import com.eproject.service.mail.MailService;
 import com.eproject.webapi.authcontroller.RegisterRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class UserService implements IUserService {
     private ModelMapper _modelMapper;
     @Autowired
     private JwtService _jwtService;
+    @Autowired
+    MailService _mailService;
 
     @Override
     public UserEntity addNewUser(RegisterRequest request, Set<RoleEntity> roles) {
@@ -40,7 +43,9 @@ public class UserService implements IUserService {
                 encoded
         );
         user.setUserRoles(roleEntities);
-        return _userRepository.saveAndFlush(user);
+        UserEntity res = _userRepository.saveAndFlush(user);
+        _mailService.sendMail(user.getEmail(), "Test email", "Test email content");
+        return res;
     }
 
     @Override
