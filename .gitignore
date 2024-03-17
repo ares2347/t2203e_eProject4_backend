@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 src/main/java/com/eproject/application/file/*
-
+!src/main/java/com/eproject/application/file/.gitignore
 ### STS ###
 .apt_generated
 .classpath
