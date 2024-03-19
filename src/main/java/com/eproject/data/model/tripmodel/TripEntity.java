@@ -34,7 +34,7 @@ public class TripEntity extends BaseEntity {
         this.vehicleType = vehicleType;
         this.seatAmount = seatAmount;
         this.brand = brand;
-//        this.vehicle = vehicle;
+        this.vehicle = vehicle;
     }
 
     @Id

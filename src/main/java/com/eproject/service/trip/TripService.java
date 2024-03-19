@@ -86,21 +86,6 @@ public class TripService implements ITripService {
                     if (day.isAfter(LocalDate.now()) || (day.isEqual(LocalDate.now()) && startTimeFromStart.isAfter(LocalTime.now()))) {
                         VehicleEntity startVehicle = vehiclesInStart.removeFirst();
                         vehiclesInEnd.addLast(startVehicle);
-//                        _tripRepository.saveAndFlush(new TripEntity(
-//                                TripStatusEnum.WAITING,
-//                                route.getStartCity(),
-//                                route.getStartStation(),
-//                                route.getEndCity(),
-//                                route.getEndStation(),
-//                                startTimeFromStart,
-//                                day,
-//                                route.getRouteDuration(),
-//                                route.getStationsMapping(),
-//                                route.getVehicleType(),
-//                                route.getSeatAmount(),
-//                                route.getBrand(),
-//                                startVehicle
-//                        ));
                         trips.add(new TripEntity(
                                 TripStatusEnum.WAITING,
                                 route.getStartCity(),
@@ -129,21 +114,6 @@ public class TripService implements ITripService {
                     if (day.isAfter(LocalDate.now()) || (day.isEqual(LocalDate.now()) && startTimeFromEnd.isAfter(LocalTime.now()))) {
                         VehicleEntity endVehicle = vehiclesInEnd.removeFirst();
                         vehiclesInStart.addLast(endVehicle);
-//                        _tripRepository.saveAndFlush(new TripEntity(
-//                                TripStatusEnum.WAITING,
-//                                route.getStartCity(),
-//                                route.getStartStation(),
-//                                route.getEndCity(),
-//                                route.getEndStation(),
-//                                startTimeFromEnd,
-//                                day,
-//                                route.getRouteDuration(),
-//                                route.getStationsMapping(),
-//                                route.getVehicleType(),
-//                                route.getSeatAmount(),
-//                                route.getBrand(),
-//                                endVehicle
-//                        ));
                         trips.add(new TripEntity(
                                 TripStatusEnum.WAITING,
                                 route.getStartCity(),
