@@ -100,7 +100,7 @@ public class BrandController {
     }
 
     @PostMapping(path = "/driver/create-driver", consumes = "application/json", produces = "application/json")
-    public ResponseEntity createVehicle(@RequestBody @Valid CreateDriverRequest request, BindingResult bindingResult) {
+    public ResponseEntity createVehicle(@RequestBody CreateDriverRequest request) {
         try {
             DriverDto result = _driverService.createDriver(request);
             return new ResponseEntity<>(result, HttpStatus.OK);

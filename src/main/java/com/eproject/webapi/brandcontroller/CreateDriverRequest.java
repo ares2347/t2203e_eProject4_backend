@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public class CreateDriverRequest {
-    public UUID driverId;
     public String fullName;
     public LocalDate dob;
     public String phoneNumber;

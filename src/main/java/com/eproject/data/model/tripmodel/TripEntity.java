@@ -34,7 +34,7 @@ public class TripEntity extends BaseEntity {
         this.vehicleType = vehicleType;
         this.seatAmount = seatAmount;
         this.brand = brand;
-        this.vehicle = vehicle;
+//        this.vehicle = vehicle;
     }
 
     @Id
@@ -86,7 +86,7 @@ public class TripEntity extends BaseEntity {
     @ToString.Exclude
     private BrandEntity brand;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id")
     @JsonIgnore
     private VehicleEntity vehicle;
