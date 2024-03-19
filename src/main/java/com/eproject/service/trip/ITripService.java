@@ -8,9 +8,11 @@ import com.eproject.data.model.tripmodel.RouteEntity;
 import com.eproject.data.model.tripmodel.TripEntity;
 import com.eproject.webapi.brandcontroller.CreateRouteRequest;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+@Service
 public interface ITripService {
     RouteEntity createNewRoute(CreateRouteRequest request);
 

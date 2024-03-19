@@ -1,13 +1,9 @@
-package com.eproject.data.dto.trip;
+package com.eproject.webapi.usercontroller;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.UUID;
 
-public class TicketDto {
-    private UUID ticketId;
+public class BookTicketRequestDetail {
     private String customerName;
     private Date customerDob;
     private String customerIc;
@@ -17,6 +13,4 @@ public class TicketDto {
     private String dropoffPoint;
     private String seatNumber;
     private BigDecimal price;
-    private LocalTime startTime;
-    private LocalDate startDate;
 }

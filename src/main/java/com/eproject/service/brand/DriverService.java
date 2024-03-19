@@ -1,6 +1,7 @@
-package com.eproject.service.vehicle;
+package com.eproject.service.brand;
 
 import com.eproject.data.dto.PageDto;
+import com.eproject.data.dto.brand.DriverDto;
 import com.eproject.data.dto.vehicle.VehicleDto;
 import com.eproject.data.model.brandmodel.BrandEntity;
 import com.eproject.data.model.brandmodel.DriverEntity;
@@ -10,8 +11,7 @@ import com.eproject.repository.BrandRepository;
 import com.eproject.repository.DriverRepository;
 import com.eproject.repository.VehicleRepository;
 import com.eproject.service.auth.JwtService;
-import com.eproject.webapi.brandcontroller.CreateVehicleRequest;
-import com.eproject.webapi.brandcontroller.UpdateDriverVehicle;
+import com.eproject.webapi.brandcontroller.CreateDriverRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,33 +19,28 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-
-public class VehicleService implements IVehicleService {
-
+public class DriverService implements IDriverService {
     @Autowired
-    VehicleRepository _vehicleRepository;
-    @Autowired
-    BrandRepository _brandRepository;
+    ModelMapper _modelMapper;
     @Autowired
     DriverRepository _driverRepository;
     @Autowired
-    JwtService _jwtService;
+    BrandRepository _brandRepository;
     @Autowired
-    ModelMapper _modelMapper;
+    JwtService _jwtService;
 
     @Override
-    public VehicleDto createNewVehicle(CreateVehicleRequest request) {
-        VehicleEntity vehicle = _modelMapper.map(request, VehicleEntity.class);
+    public DriverDto createDriver(CreateDriverRequest request) {
+        DriverEntity driver = _modelMapper.map(request, DriverEntity.class);
         UserEntity user = _jwtService.getCurrentUser();
         BrandEntity brand = _brandRepository.findById(user.getBrand().getBrandId()).orElseThrow();
-        vehicle.setBrand(brand);
-        VehicleEntity res = _vehicleRepository.saveAndFlush(vehicle);
-        return _modelMapper.map(res, VehicleDto.class);
+        driver.setBrand(brand);
+        DriverEntity res = _driverRepository.saveAndFlush(driver);
+        return _modelMapper.map(res, DriverDto.class);
     }
 
     @Override
-    public PageDto<VehicleDto> getVehiclesByCurrentUser(String sortBy, String sortOrder, int page, int size) {
+    public PageDto<DriverDto> getDriversByCurrentUser(String sortBy, String sortOrder, int page, int size) {
         try{
             UserEntity user = _jwtService.getCurrentUser();
             BrandEntity brand = _brandRepository.findById(user.getBrand().getBrandId()).orElseThrow();
@@ -59,9 +54,9 @@ public class VehicleService implements IVehicleService {
                     pagination = PageRequest.of(page, size, Sort.by(sortBy).descending());
                 }
             }
-            Page<VehicleEntity> queryResult = _vehicleRepository.findAllByBrand(brand, pagination);
-            return new PageDto<VehicleDto>(
-                    queryResult.get().map(x -> _modelMapper.map(x, VehicleDto.class)).toList(),
+            Page<DriverEntity> queryResult = _driverRepository.findAllByBrand(brand, pagination);
+            return new PageDto<DriverDto>(
+                    queryResult.get().map(x -> _modelMapper.map(x, DriverDto.class)).toList(),
                     queryResult.getNumber(),
                     queryResult.getSize(),
                     queryResult.getTotalPages(),
@@ -70,14 +65,5 @@ public class VehicleService implements IVehicleService {
             ex.printStackTrace();
             return PageDto.empty();
         }
-    }
-
-    @Override
-    public VehicleDto updateVehicleDrivers(UpdateDriverVehicle request) {
-        VehicleEntity vehicle = _vehicleRepository.findById(request.vehicleId).orElseThrow();
-        List<DriverEntity> driverEntities = _driverRepository.findAllByDriverIdIn(request.driverIds);
-        vehicle.getDrivers().addAll(driverEntities);
-        VehicleEntity result = _vehicleRepository.saveAndFlush(vehicle);
-        return _modelMapper.map(result, VehicleDto.class);
     }
 }

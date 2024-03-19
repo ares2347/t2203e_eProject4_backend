@@ -13,7 +13,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "drivers", schema = "eproject")
+@Table(name = "drivers")
 @NoArgsConstructor
 @AllArgsConstructor
 public class DriverEntity extends BaseEntity {
@@ -53,4 +53,10 @@ public class DriverEntity extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private VehicleEntity vehicle;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private BrandEntity brand;
 }

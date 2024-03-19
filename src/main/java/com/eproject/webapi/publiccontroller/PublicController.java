@@ -5,6 +5,7 @@ import com.eproject.data.dto.trip.RouteDto;
 import com.eproject.data.dto.trip.TripDto;
 import com.eproject.data.model.tripmodel.RouteEntity;
 import com.eproject.service.storage.StorageService;
+import com.eproject.service.trip.ITripService;
 import com.eproject.service.trip.TripService;
 import com.eproject.webapi.BaseResponse;
 import org.apache.commons.io.IOUtils;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @RequestMapping("/api/public")
 public class PublicController {
     @Autowired
-    private TripService _tripService;
+    private ITripService _tripService;
 
     @Autowired
     private ModelMapper _mapper;

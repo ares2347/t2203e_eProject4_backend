@@ -1,8 +1,11 @@
 package com.eproject.webapi.usercontroller;
 
+import com.eproject.data.dto.PageDto;
+import com.eproject.data.dto.trip.TicketDto;
 import com.eproject.data.dto.user.UserDto;
 import com.eproject.data.model.usermodel.UserEntity;
 import com.eproject.service.auth.JwtService;
+import com.eproject.service.ticket.ITicketService;
 import com.eproject.service.ticket.TicketService;
 import com.eproject.service.user.IUserService;
 import com.eproject.service.user.UserService;
@@ -13,11 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
-    TicketService _ticketService;
+    ITicketService _ticketService;
 
     @Autowired
     private JwtService _jwtService;
@@ -32,6 +38,31 @@ public class UserController {
             return new ResponseEntity(res, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity(new BaseResponse<>("Lỗi xảy ra khi lấy thông tin người dùng."), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(name = "/ticket/my-tickets")
+    public ResponseEntity getCurrentUserTickets(@RequestParam(name = "startDate") LocalDate startDate,
+                                                @RequestParam(name = "pickupPoint") String pickupPoint,
+                                                @RequestParam(name = "dropoffPoint") String dropoffPoint,
+                                                @RequestParam(name = "page", defaultValue = "0") int page,
+                                                @RequestParam(name = "size", defaultValue = "10") int size) {
+        try {
+            PageDto<TicketDto> res = _ticketService.getCurrentUserTickets(startDate, dropoffPoint, pickupPoint, page, size);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity(new BaseResponse<>("Lỗi xảy ra khi lấy danh sách vé."), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(name = "/ticket/book-tickets", consumes = "application/json", produces = "application/json")
+    public ResponseEntity bookTickets(BookTicketRequest request) {
+        try {
+            List<TicketDto> res = _ticketService.bookTickets(request);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity(new BaseResponse<>("Lỗi xảy ra khi đặt vé."), HttpStatus.BAD_REQUEST);
         }
     }
 }

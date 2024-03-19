@@ -1,38 +1,31 @@
 package com.eproject.webapi.brandcontroller;
 
 import com.eproject.data.dto.PageDto;
+import com.eproject.data.dto.brand.DriverDto;
 import com.eproject.data.dto.trip.RouteDto;
+import com.eproject.data.dto.vehicle.VehicleDto;
 import com.eproject.data.model.tripmodel.RouteEntity;
-import com.eproject.data.model.usermodel.RoleEntity;
-import com.eproject.data.model.usermodel.UserEntity;
-import com.eproject.data.model.usermodel.UserRolesEnum;
-import com.eproject.service.trip.TripService;
-import com.eproject.service.user.BrandService;
-import com.eproject.service.vehicle.VehicleService;
+import com.eproject.service.brand.IDriverService;
+import com.eproject.service.trip.ITripService;
+import com.eproject.service.vehicle.IVehicleService;
 import com.eproject.webapi.BaseResponse;
-import com.eproject.webapi.authcontroller.AuthResponse;
-import com.eproject.webapi.authcontroller.RegisterRequest;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/brand")
 public class BrandController {
     @Autowired
-    private TripService _tripService;
+    private ITripService _tripService;
+    @Autowired
+    private IVehicleService _vehicleService;
+    @Autowired
+    private IDriverService _driverService;
 
     @Autowired
     private ModelMapper _mapper;
@@ -80,4 +73,68 @@ public class BrandController {
     }
     //endregion
 
+    //region Drivers and Vehicles
+    @PostMapping(path = "/vehicle/create-vehicle", consumes = "application/json", produces = "application/json")
+    public ResponseEntity createVehicle(@RequestBody @Valid CreateVehicleRequest request, BindingResult bindingResult) {
+        try {
+            VehicleDto result = _vehicleService.createNewVehicle(request);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Tạo phương tiện thất bại."), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(path = "/vehicle/get-vehicles")
+    public ResponseEntity getVehicles(
+            @RequestParam(name = "sortBy", defaultValue = "created_by", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "desc", required = false) String sortOrder,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        try {
+            PageDto<VehicleDto> result = _vehicleService.getVehiclesByCurrentUser(sortBy, sortOrder, page, size);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Lỗi xảy ra khi tìm kiếm phương tiện."), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/driver/create-driver", consumes = "application/json", produces = "application/json")
+    public ResponseEntity createVehicle(@RequestBody @Valid CreateDriverRequest request, BindingResult bindingResult) {
+        try {
+            DriverDto result = _driverService.createDriver(request);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Thêm tài xế mới thất bại."), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/driver/get-drivers")
+    public ResponseEntity getDrivers(
+            @RequestParam(name = "sortBy", defaultValue = "created_by", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "desc", required = false) String sortOrder,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        try {
+            PageDto<DriverDto> result = _driverService.getDriversByCurrentUser(sortBy, sortOrder, page, size);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Lỗi xảy ra khi tìm kiếm tài xế."), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/vehicle/update-drivers", consumes = "application/json", produces = "application/json")
+    public ResponseEntity createVehicle(@RequestBody @Valid UpdateDriverVehicle request, BindingResult bindingResult) {
+        try {
+            VehicleDto result = _vehicleService.updateVehicleDrivers(request);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return new ResponseEntity<>(new BaseResponse("Cập nhật tài xế phương tiện thất bại."), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //endregion
 }

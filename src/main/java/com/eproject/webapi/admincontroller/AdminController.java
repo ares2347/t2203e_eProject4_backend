@@ -1,10 +1,7 @@
 package com.eproject.webapi.admincontroller;
 
 import com.eproject.data.model.brandmodel.BrandEntity;
-import com.eproject.data.model.usermodel.UserEntity;
-import com.eproject.service.user.IBrandService;
-import com.eproject.service.user.IUserService;
-import com.eproject.service.user.UserService;
+import com.eproject.service.brand.IBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

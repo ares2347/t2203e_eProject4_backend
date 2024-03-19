@@ -57,6 +57,11 @@ public class BrandEntity extends BaseEntity {
     @ToString.Exclude
     private Collection<VehicleEntity> vehicles;
 
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Collection<DriverEntity> drivers;
+
     public BrandEntity(String brandName, String hotline, String email) {
 
         this.brandName = brandName;

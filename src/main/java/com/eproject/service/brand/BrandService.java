@@ -1,4 +1,4 @@
-package com.eproject.service.user;
+package com.eproject.service.brand;
 
 import com.eproject.data.model.brandmodel.BrandEntity;
 import com.eproject.data.model.usermodel.RoleEntity;
@@ -10,12 +10,10 @@ import com.eproject.webapi.admincontroller.CreateBrandAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Service
 public class BrandService implements IBrandService {
     @Autowired
     BrandRepository _brandRepository;
