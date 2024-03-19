@@ -7,16 +7,16 @@ import java.time.LocalTime;
 import java.util.UUID;
 
 public class TicketDto {
-    private UUID ticketId;
-    private String customerName;
-    private Date customerDob;
-    private String customerIc;
-    private String customerEmail;
-    private String customerPhone;
-    private String pickupPoint;
-    private String dropoffPoint;
-    private String seatNumber;
-    private BigDecimal price;
-    private LocalTime startTime;
-    private LocalDate startDate;
+    public UUID ticketId;
+    public String customerName;
+    public Date customerDob;
+    public String customerIc;
+    public String customerEmail;
+    public String customerPhone;
+    public String pickupPoint;
+    public String dropoffPoint;
+    public String seatNumber;
+    public BigDecimal price;
+    public LocalTime startTime;
+    public LocalDate startDate;
 }

@@ -5,11 +5,14 @@ import com.eproject.data.dto.trip.TicketDto;
 import com.eproject.data.dto.user.UserDto;
 import com.eproject.data.model.usermodel.UserEntity;
 import com.eproject.service.auth.JwtService;
+import com.eproject.service.payment.IPaymentInterface;
 import com.eproject.service.ticket.ITicketService;
 import com.eproject.service.ticket.TicketService;
 import com.eproject.service.user.IUserService;
 import com.eproject.service.user.UserService;
 import com.eproject.webapi.BaseResponse;
+import com.eproject.webapi.paymentcontroller.ThirdPartyPaymentData;
+import com.eproject.webapi.paymentcontroller.ThirdPartyPaymentResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,9 @@ public class UserController {
 
     @Autowired
     private IUserService _userService;
+
+    @Autowired
+    private IPaymentInterface _paymentInterface;
 
     @GetMapping("/info")
     public ResponseEntity getUserInfo(HttpServletRequest request) {
@@ -59,7 +65,8 @@ public class UserController {
     public ResponseEntity bookTickets(BookTicketRequest request) {
         try {
             List<TicketDto> res = _ticketService.bookTickets(request);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            ThirdPartyPaymentResponse payment = _paymentInterface.createPayment(res);
+            return new ResponseEntity<>(payment.data.checkoutUrl, HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity(new BaseResponse<>("Lỗi xảy ra khi đặt vé."), HttpStatus.BAD_REQUEST);
