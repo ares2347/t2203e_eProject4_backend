@@ -14,9 +14,9 @@ public class PageDto<T> {
     public static PageDto empty(){
         return new PageDto(new ArrayList(), 0, 0, 0, 0);
     }
-    private Collection<T> data;
-    private int page;
-    private int size;
-    private int totalPage;
-    private int total;
+    public Collection<T> data;
+    public int page;
+    public int size;
+    public int totalPage;
+    public int total;
 }

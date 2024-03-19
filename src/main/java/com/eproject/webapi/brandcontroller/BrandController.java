@@ -89,7 +89,7 @@ public class BrandController {
     }
     @GetMapping(path = "/vehicle/get-vehicles")
     public ResponseEntity getVehicles(
-            @RequestParam(name = "sortBy", defaultValue = "created_by", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "createdBy", required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "desc", required = false) String sortOrder,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
