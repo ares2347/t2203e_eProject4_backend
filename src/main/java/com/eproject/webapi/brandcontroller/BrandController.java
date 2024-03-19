@@ -5,9 +5,12 @@ import com.eproject.data.dto.brand.DriverDto;
 import com.eproject.data.dto.trip.RouteDto;
 import com.eproject.data.dto.vehicle.VehicleDto;
 import com.eproject.data.model.tripmodel.RouteEntity;
+import com.eproject.service.brand.DriverService;
 import com.eproject.service.brand.IDriverService;
 import com.eproject.service.trip.ITripService;
+import com.eproject.service.trip.TripService;
 import com.eproject.service.vehicle.IVehicleService;
+import com.eproject.service.vehicle.VehicleService;
 import com.eproject.webapi.BaseResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -21,11 +24,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/brand")
 public class BrandController {
     @Autowired
-    private ITripService _tripService;
+    private TripService _tripService;
     @Autowired
-    private IVehicleService _vehicleService;
+    private VehicleService _vehicleService;
     @Autowired
-    private IDriverService _driverService;
+    private DriverService _driverService;
 
     @Autowired
     private ModelMapper _mapper;

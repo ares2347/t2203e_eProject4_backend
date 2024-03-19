@@ -30,6 +30,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
+@Service
 public class TripService implements ITripService {
     @Autowired
     private RouteRepository _routeRepository;

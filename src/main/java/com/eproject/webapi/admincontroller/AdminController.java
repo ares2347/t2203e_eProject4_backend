@@ -1,6 +1,7 @@
 package com.eproject.webapi.admincontroller;
 
 import com.eproject.data.model.brandmodel.BrandEntity;
+import com.eproject.service.brand.BrandService;
 import com.eproject.service.brand.IBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
-    private IBrandService _brandService;
+    private BrandService _brandService;
 
 
     @PostMapping(path = "/create-brand", consumes = "application/json", produces = "application/json")

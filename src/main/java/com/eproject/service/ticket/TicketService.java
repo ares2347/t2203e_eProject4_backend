@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class TicketService implements ITicketService {
 
     @Autowired

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public interface IVehicleService {
     VehicleDto createNewVehicle(CreateVehicleRequest request);
     PageDto<VehicleDto> getVehiclesByCurrentUser(String sortBy, String sortOrder, int page, int size);
