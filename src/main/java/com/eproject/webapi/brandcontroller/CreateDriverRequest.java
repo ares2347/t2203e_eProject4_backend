@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public class CreateDriverRequest {
-    private UUID driverId;
-    private String fullName;
-    private LocalDate dob;
-    private String phoneNumber;
-    private String email;
-    private String nationalId;
-    private String address;
-    private String photoUrl;
+    public UUID driverId;
+    public String fullName;
+    public LocalDate dob;
+    public String phoneNumber;
+    public String email;
+    public String nationalId;
+    public String address;
+    public String photoUrl;
 }

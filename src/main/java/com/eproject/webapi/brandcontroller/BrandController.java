@@ -77,8 +77,8 @@ public class BrandController {
     //endregion
 
     //region Drivers and Vehicles
-    @PostMapping(path = "/vehicle/create-vehicle", consumes = "application/json", produces = "application/json")
-    public ResponseEntity createVehicle(@RequestBody @Valid CreateVehicleRequest request, BindingResult bindingResult) {
+    @PostMapping(path = "/vehicle/create-vehicle")
+    public ResponseEntity createVehicle(@RequestBody CreateVehicleRequest request) {
         try {
             VehicleDto result = _vehicleService.createNewVehicle(request);
             return new ResponseEntity<>(result, HttpStatus.OK);
