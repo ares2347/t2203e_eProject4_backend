@@ -56,6 +56,12 @@ public class UserService implements IUserService {
     @Override
     public UserDto getCurrentUserInfo() {
         UserEntity user = _jwtService.getCurrentUser();
-        return _modelMapper.map(user, UserDto.class);
+        return new UserDto(
+                user.getUserId(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getFullName(),
+                user.getRoles().stream().map(x -> x.roleName).collect(Collectors.toSet())
+        );
     }
 }

@@ -13,4 +13,12 @@ public class UserDto {
     public String phoneNumber;
     public String fullName;
     public Set<String> roles;
+
+    public UserDto(UUID userId, String email, String phoneNumber, String fullName, Set<String> roles) {
+        this.userId = userId;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.fullName = fullName;
+        this.roles = roles;
+    }
 }
