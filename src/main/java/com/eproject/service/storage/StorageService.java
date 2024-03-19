@@ -17,8 +17,6 @@ import java.util.stream.Stream;
 @Service
 public class StorageService implements IStorageService {
     private final Path rootLocation = Paths.get("src/main/java/com/eproject/application/file");
-
-
     @Override
     public UUID store(MultipartFile file) {
         try {

@@ -42,8 +42,6 @@ public class TripService implements ITripService {
     private UserRepository _userRepository;
     @Autowired
     private JwtService _jwtService;
-    @Autowired
-    private ModelMapper _mapper;
 
     @Override
     public RouteEntity createNewRoute(CreateRouteRequest request) {
@@ -52,7 +50,7 @@ public class TripService implements ITripService {
             Optional<UserEntity> userEntity = _userRepository.findById(user.getUserId());
             if (userEntity.isPresent()) {
                 BrandEntity brand = userEntity.get().getBrand();
-                RouteEntity route = _mapper.map(request, RouteEntity.class);
+                RouteEntity route = new RouteEntity(request);
                 route.setBrand(brand);
                 RouteEntity res = _routeRepository.saveAndFlush(route);
                 this.addTripToRoute(res);
@@ -152,7 +150,7 @@ public class TripService implements ITripService {
                 Pageable pagination = PageRequest.of(page, size);
                 Page<RouteEntity> queryResult = _routeRepository.findAllByBrand(brand, pagination);
                 return new PageDto<RouteDto>(
-                        queryResult.get().map(x -> _mapper.map(x, RouteDto.class)).toList(),
+                        queryResult.get().map(x -> new RouteDto(x)).toList(),
                         queryResult.getNumber(),
                         queryResult.getSize(),
                         queryResult.getTotalPages(),
@@ -175,7 +173,7 @@ public class TripService implements ITripService {
                 Pageable pagination = PageRequest.of(page, size);
                 Page<TripEntity> queryResult = _tripRepository.findAllByBrand(brand, pagination);
                 return new PageDto<TripDto>(
-                        queryResult.get().map(x -> _mapper.map(x, TripDto.class)).toList(),
+                        queryResult.get().map(x -> new TripDto(x)).toList(),
                         queryResult.getNumber(),
                         queryResult.getSize(),
                         queryResult.getTotalPages(),
@@ -195,7 +193,7 @@ public class TripService implements ITripService {
             Page<TripEntity> queryResult = _tripRepository.findAllByStartDateAndStartCityAndEndCityAndVehicleTypeContains(
                     startDate, startCity, endCity, vehicleType, pagination);
             return new PageDto<TripDto>(
-                    queryResult.get().map(x -> _mapper.map(x, TripDto.class)).toList(),
+                    queryResult.get().map(x -> new TripDto(x)).toList(),
                     queryResult.getNumber(),
                     queryResult.getSize(),
                     queryResult.getTotalPages(),

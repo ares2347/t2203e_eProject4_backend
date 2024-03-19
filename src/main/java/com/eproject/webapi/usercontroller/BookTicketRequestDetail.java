@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 public class BookTicketRequestDetail {
-    private String customerName;
-    private Date customerDob;
-    private String customerIc;
-    private String customerEmail;
-    private String customerPhone;
-    private String pickupPoint;
-    private String dropoffPoint;
-    private String seatNumber;
-    private BigDecimal price;
+    public String customerName;
+    public Date customerDob;
+    public String customerIc;
+    public String customerEmail;
+    public String customerPhone;
+    public String pickupPoint;
+    public String dropoffPoint;
+    public String seatNumber;
+    public BigDecimal price;
 }

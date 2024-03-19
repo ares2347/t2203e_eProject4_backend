@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DriverService implements IDriverService {
     @Autowired
-    ModelMapper _modelMapper;
-    @Autowired
     DriverRepository _driverRepository;
     @Autowired
     BrandRepository _brandRepository;
@@ -33,12 +31,12 @@ public class DriverService implements IDriverService {
 
     @Override
     public DriverDto createDriver(CreateDriverRequest request) {
-        DriverEntity driver = _modelMapper.map(request, DriverEntity.class);
+        DriverEntity driver = new DriverEntity(request);
         UserEntity user = _jwtService.getCurrentUser();
         BrandEntity brand = _brandRepository.findById(user.getBrand().getBrandId()).orElseThrow();
         driver.setBrand(brand);
         DriverEntity res = _driverRepository.saveAndFlush(driver);
-        return _modelMapper.map(res, DriverDto.class);
+        return new DriverDto(res);
     }
 
     @Override
@@ -58,7 +56,7 @@ public class DriverService implements IDriverService {
             }
             Page<DriverEntity> queryResult = _driverRepository.findAllByBrand(brand, pagination);
             return new PageDto<DriverDto>(
-                    queryResult.get().map(x -> _modelMapper.map(x, DriverDto.class)).toList(),
+                    queryResult.get().map(x -> new DriverDto(x)).toList(),
                     queryResult.getNumber(),
                     queryResult.getSize(),
                     queryResult.getTotalPages(),

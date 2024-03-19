@@ -1,6 +1,7 @@
 package com.eproject.data.dto.vehicle;
 
 import com.eproject.data.model.tripmodel.TripStatusEnum;
+import com.eproject.data.model.vehiclemodel.VehicleEntity;
 import com.eproject.data.model.vehiclemodel.VehicleTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -9,19 +10,30 @@ import jakarta.persistence.Enumerated;
 import java.util.UUID;
 
 public class VehicleDto {
-    private UUID vehicleId;
+    public UUID vehicleId;
 
-    private VehicleTypeEnum vehicleType;
+    public VehicleTypeEnum vehicleType;
 
-    private String vehicleBrand;
+    public String vehicleBrand;
 
-    private String licensePlate;
+    public String licensePlate;
 
-    private Integer seatAmount;
+    public Integer seatAmount;
 
-    private String currentStation;
+    public String currentStation;
 
-    private TripStatusEnum vehicleStatus;
+    public TripStatusEnum vehicleStatus;
 
-    private String photoUrl;
+    public String photoUrl;
+
+    public VehicleDto(VehicleEntity entity) {
+        this.vehicleId = entity.getVehicleId();
+        this.vehicleType = entity.getVehicleType();
+        this.vehicleBrand = entity.getVehicleBrand();
+        this.licensePlate = entity.getLicensePlate();
+        this.seatAmount = entity.getSeatAmount();
+        this.currentStation = entity.getCurrentStation();
+        this.vehicleStatus = entity.getVehicleStatus();
+        this.photoUrl = entity.getPhotoUrl();
+    }
 }

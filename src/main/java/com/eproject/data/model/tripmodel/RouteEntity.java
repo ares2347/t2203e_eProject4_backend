@@ -2,6 +2,7 @@ package com.eproject.data.model.tripmodel;
 
 import com.eproject.data.model.BaseEntity;
 import com.eproject.data.model.brandmodel.BrandEntity;
+import com.eproject.webapi.brandcontroller.CreateRouteRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -76,4 +77,20 @@ public class RouteEntity extends BaseEntity {
     @ToString.Exclude
     private BrandEntity brand;
 
+    public RouteEntity(CreateRouteRequest request) {
+        this.startCity = request.startCity;
+        this.startStation = request.startStation;
+        this.endCity = request.endCity;
+        this.endStation = request.endStation;
+        this.routeDuration = request.routeDuration;
+        this.earliestStartTimeFromStart = request.earliestStartTimeFromStart;
+        this.latestStartTimeFromStart = request.latestStartTimeFromStart;
+        this.earliestStartTimeFromEnd = request.earliestStartTimeFromEnd;
+        this.latestStartTimeFromEnd = request.latestStartTimeFromEnd;
+        this.gapDurationBetweenTrip = request.gapDurationBetweenTrip;
+        this.gapDurationBetweenRoute = request.gapDurationBetweenRoute;
+        this.stationsMapping = request.stationsMapping;
+        this.vehicleType = request.vehicleType;
+        this.seatAmount = request.seatAmount;
+    }
 }

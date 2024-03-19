@@ -30,15 +30,12 @@ public class BrandController {
     @Autowired
     private DriverService _driverService;
 
-    @Autowired
-    private ModelMapper _mapper;
-
     //region Routes
     @PostMapping(path = "/trip/create-route", consumes = "application/json", produces = "application/json")
     public ResponseEntity createRoute(@RequestBody @Valid CreateRouteRequest request, BindingResult bindingResult) {
         try {
             RouteEntity routeEntity = _tripService.createNewRoute(request);
-            RouteDto result = _mapper.map(routeEntity, RouteDto.class);
+            RouteDto result = new RouteDto(routeEntity);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

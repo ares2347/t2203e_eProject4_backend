@@ -3,6 +3,7 @@ package com.eproject.data.model.ticketmodel;
 import com.eproject.data.model.BaseEntity;
 import com.eproject.data.model.paymentmodel.PaymentEntity;
 import com.eproject.data.model.tripmodel.TripEntity;
+import com.eproject.webapi.usercontroller.BookTicketRequestDetail;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -69,4 +70,15 @@ public class TicketEntity extends BaseEntity {
     @OneToOne(mappedBy = "ticket")
     private PaymentEntity payment;
 
+    public TicketEntity(BookTicketRequestDetail request) {
+        this.customerName = request.customerName;
+        this.customerDob = request.customerDob;
+        this.customerIc = request.customerIc;
+        this.customerEmail = request.customerEmail;
+        this.customerPhone = request.customerPhone;
+        this.pickupPoint = request.pickupPoint;
+        this.dropoffPoint = request.dropoffPoint;
+        this.price = request.price;
+        this.seatNumber = request.seatNumber;
+    }
 }

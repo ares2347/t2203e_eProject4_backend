@@ -32,8 +32,6 @@ public class TicketService implements ITicketService {
     TripRepository _tripRepository;
     @Autowired
     JwtService _jwtService;
-    @Autowired
-    ModelMapper _mapper;
 
     @Override
     public PageDto<TicketDto> getCurrentUserTickets(LocalDate startDate, String dropoffPoint, String pickupPoint, int page, int size) {
@@ -42,7 +40,7 @@ public class TicketService implements ITicketService {
             Pageable pagination = PageRequest.of(page, size);
             Page<TicketEntity> queryResult = _ticketRepository.findAllByStartDateAndDropoffPointAndPickupPointAndCreatedBy(startDate, dropoffPoint, pickupPoint, userEntity, pagination);
             return new PageDto<TicketDto>(
-                    queryResult.get().map(x -> _mapper.map(x, TicketDto.class)).toList(),
+                    queryResult.get().map(x -> new TicketDto(x)).toList(),
                     queryResult.getNumber(),
                     queryResult.getSize(),
                     queryResult.getTotalPages(),
@@ -60,15 +58,15 @@ public class TicketService implements ITicketService {
             List<TicketEntity> ticketEntities = new ArrayList<>();
             TripEntity trip = _tripRepository.findById(request.tripId).orElseThrow();
             for (BookTicketRequestDetail ticket : request.tickets) {
-                TicketEntity ticketEntity = _mapper.map(ticket, TicketEntity.class);
+                TicketEntity ticketEntity = new TicketEntity(ticket);
                 ticketEntity.setTrip(trip);
                 ticketEntity.setStartDate(trip.getStartDate());
                 ticketEntity.setStartTime(trip.getStartTime());
                 ticketEntities.add(ticketEntity);
             }
             List<TicketEntity> queryResult = _ticketRepository.saveAllAndFlush(ticketEntities);
-            return queryResult.stream().map(x -> _mapper.map(x, TicketDto.class)).toList();
-        } catch (Exception ex){
+            return queryResult.stream().map(x -> new TicketDto(x)).toList();
+        } catch (Exception ex) {
             ex.printStackTrace();
             return new ArrayList<>();
         }

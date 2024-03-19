@@ -5,6 +5,7 @@ import com.eproject.data.model.brandmodel.BrandEntity;
 import com.eproject.data.model.brandmodel.DriverEntity;
 import com.eproject.data.model.tripmodel.TripEntity;
 import com.eproject.data.model.tripmodel.TripStatusEnum;
+import com.eproject.webapi.brandcontroller.CreateVehicleRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -68,4 +69,13 @@ public class VehicleEntity extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private BrandEntity brand;
+
+    public VehicleEntity(CreateVehicleRequest request) {
+        this.vehicleType = request.vehicleType;
+        this.vehicleBrand = request.vehicleBrand;
+        this.licensePlate = request.licensePlate;
+        this.seatAmount = request.seatAmount;
+        this.currentStation = request.currentStation;
+        this.photoUrl = request.photoUrl;
+    }
 }

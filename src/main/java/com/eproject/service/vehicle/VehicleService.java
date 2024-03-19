@@ -33,17 +33,15 @@ public class VehicleService implements IVehicleService {
     DriverRepository _driverRepository;
     @Autowired
     JwtService _jwtService;
-    @Autowired
-    ModelMapper _modelMapper;
 
     @Override
     public VehicleDto createNewVehicle(CreateVehicleRequest request) {
-        VehicleEntity vehicle = _modelMapper.map(request, VehicleEntity.class);
+        VehicleEntity vehicle = new VehicleEntity(request);
         UserEntity user = _jwtService.getCurrentUser();
         BrandEntity brand = _brandRepository.findById(user.getBrand().getBrandId()).orElseThrow();
         vehicle.setBrand(brand);
         VehicleEntity res = _vehicleRepository.saveAndFlush(vehicle);
-        return _modelMapper.map(res, VehicleDto.class);
+        return new VehicleDto(res);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class VehicleService implements IVehicleService {
             }
             Page<VehicleEntity> queryResult = _vehicleRepository.findAllByBrand(brand, pagination);
             return new PageDto<VehicleDto>(
-                    queryResult.get().map(x -> _modelMapper.map(x, VehicleDto.class)).toList(),
+                    queryResult.get().map(x -> new VehicleDto(x)).toList(),
                     queryResult.getNumber(),
                     queryResult.getSize(),
                     queryResult.getTotalPages(),
@@ -80,6 +78,6 @@ public class VehicleService implements IVehicleService {
         List<DriverEntity> driverEntities = _driverRepository.findAllByDriverIdIn(request.driverIds);
         vehicle.getDrivers().addAll(driverEntities);
         VehicleEntity result = _vehicleRepository.saveAndFlush(vehicle);
-        return _modelMapper.map(result, VehicleDto.class);
+        return new VehicleDto(result);
     }
 }

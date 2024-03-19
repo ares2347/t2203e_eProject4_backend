@@ -1,5 +1,7 @@
 package com.eproject.data.dto.brand;
 
+import com.eproject.data.model.brandmodel.DriverEntity;
+
 import java.time.LocalDate;
 
 public class DriverDto {
@@ -10,4 +12,14 @@ public class DriverDto {
     private String nationalId;
     private String address;
     private String photoUrl;
+
+    public DriverDto(DriverEntity entity) {
+        this.fullName = entity.getFullName();
+        this.dob = entity.getDob();
+        this.phoneNumber = entity.getPhoneNumber();
+        this.email = entity.getEmail();
+        this.nationalId = entity.getNationalId();
+        this.address = entity.getAddress();
+        this.photoUrl = entity.getPhotoUrl();
+    }
 }

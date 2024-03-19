@@ -26,8 +26,6 @@ public class UserService implements IUserService {
     @Autowired
     private BCryptPasswordEncoder _passwordEncoder;
     @Autowired
-    private ModelMapper _modelMapper;
-    @Autowired
     private JwtService _jwtService;
     @Autowired
     MailService _mailService;

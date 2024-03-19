@@ -2,6 +2,7 @@ package com.eproject.data.model.brandmodel;
 
 import com.eproject.data.model.BaseEntity;
 import com.eproject.data.model.vehiclemodel.VehicleEntity;
+import com.eproject.webapi.brandcontroller.CreateDriverRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -59,4 +60,14 @@ public class DriverEntity extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private BrandEntity brand;
+
+    public DriverEntity(CreateDriverRequest request) {
+        this.fullName = request.fullName;
+        this.dob = request.dob;
+        this.phoneNumber = request.phoneNumber;
+        this.email = request.email;
+        this.nationalId = request.nationalId;
+        this.address = request.address;
+        this.photoUrl = request.photoUrl;
+    }
 }

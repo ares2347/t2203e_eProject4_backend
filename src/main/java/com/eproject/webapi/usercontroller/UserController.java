@@ -27,13 +27,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     ITicketService _ticketService;
-
-    @Autowired
-    private JwtService _jwtService;
-
     @Autowired
     private IUserService _userService;
-
     @Autowired
     private IPaymentInterface _paymentInterface;
 

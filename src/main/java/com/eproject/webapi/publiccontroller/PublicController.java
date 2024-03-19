@@ -33,9 +33,6 @@ public class PublicController {
     private ITripService _tripService;
 
     @Autowired
-    private ModelMapper _mapper;
-
-    @Autowired
     private StorageService _storageService;
 
     @GetMapping(path = "/trip/get-trips")
