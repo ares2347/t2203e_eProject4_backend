@@ -77,11 +77,12 @@ public class TripService implements ITripService {
 
         LinkedList<VehicleEntity> vehiclesInStart = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getStartCity()));
         LinkedList<VehicleEntity> vehiclesInEnd = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getEndCity()));
-
         if ((long) vehiclesInStart.size() >= numberOfVehicleNeededForOneCycle && (long) vehiclesInEnd.size() >= numberOfVehicleNeededForOneCycle) {
             for (LocalDate day : remainsDaysOfMonth) {
                 LocalTime startTimeFromStart = route.getEarliestStartTimeFromStart();
                 LocalTime latestStartTimeFromStart = route.getLatestStartTimeFromStart();
+                LocalTime startTimeFromEnd = route.getEarliestStartTimeFromEnd();
+                LocalTime latestStartTimeFromEnd = route.getLatestStartTimeFromEnd();
                 do {
                     if (day.isAfter(LocalDate.now()) || (day.isEqual(LocalDate.now()) && startTimeFromStart.isAfter(LocalTime.now()))) {
                         VehicleEntity startVehicle = vehiclesInStart.removeFirst();
@@ -106,11 +107,7 @@ public class TripService implements ITripService {
                             .plusHours(route.getGapDurationBetweenRoute().getHour())
                             .plusMinutes(route.getGapDurationBetweenRoute().getMinute())
                             .plusSeconds(route.getGapDurationBetweenRoute().getSecond());
-                } while (!startTimeFromStart.isAfter(latestStartTimeFromStart));
 
-                LocalTime startTimeFromEnd = route.getEarliestStartTimeFromEnd();
-                LocalTime latestStartTimeFromEnd = route.getLatestStartTimeFromEnd();
-                do {
                     if (day.isAfter(LocalDate.now()) || (day.isEqual(LocalDate.now()) && startTimeFromEnd.isAfter(LocalTime.now()))) {
                         VehicleEntity endVehicle = vehiclesInEnd.removeFirst();
                         vehiclesInStart.addLast(endVehicle);
@@ -134,7 +131,7 @@ public class TripService implements ITripService {
                             .plusHours(route.getGapDurationBetweenRoute().getHour())
                             .plusMinutes(route.getGapDurationBetweenRoute().getMinute())
                             .plusSeconds(route.getGapDurationBetweenRoute().getSecond());
-                } while (!startTimeFromEnd.isAfter(latestStartTimeFromEnd));
+                } while (!startTimeFromStart.isAfter(latestStartTimeFromStart) && !startTimeFromEnd.isAfter(latestStartTimeFromEnd));
             }
         }
         else {
