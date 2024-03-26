@@ -12,6 +12,7 @@ import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,7 +37,7 @@ public class PublicController {
 
     @GetMapping(path = "/trip/get-trips")
     public ResponseEntity getRoutes(
-            @RequestParam(name = "startDate") LocalDate startDate,
+            @RequestParam(name = "startDate") @DateTimeFormat(pattern = "MM-dd-yyyy") LocalDate startDate,
             @RequestParam(name = "startCity") String startCity,
             @RequestParam(name = "endCity") String endCity,
             @RequestParam(name = "vehicleType", defaultValue = "", required = false) String vehicleType,

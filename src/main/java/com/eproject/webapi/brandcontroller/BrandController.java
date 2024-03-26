@@ -3,6 +3,7 @@ package com.eproject.webapi.brandcontroller;
 import com.eproject.data.dto.PageDto;
 import com.eproject.data.dto.brand.DriverDto;
 import com.eproject.data.dto.trip.RouteDto;
+import com.eproject.data.dto.trip.TripDto;
 import com.eproject.data.dto.vehicle.VehicleDto;
 import com.eproject.data.model.tripmodel.RouteEntity;
 import com.eproject.service.brand.DriverService;
@@ -64,7 +65,7 @@ public class BrandController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
         try {
-            PageDto<RouteDto> result = _tripService.getRoutesByCurrentUser(page, size);
+            PageDto<TripDto> result = _tripService.getTripsByCurrentUser(page, size);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

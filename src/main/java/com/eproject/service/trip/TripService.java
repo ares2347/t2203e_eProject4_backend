@@ -173,7 +173,7 @@ public class TripService implements ITripService {
                 Pageable pagination = PageRequest.of(page, size);
                 Page<TripEntity> queryResult = _tripRepository.findAllByBrand(brand, pagination);
                 return new PageDto<TripDto>(
-                        queryResult.get().map(x -> new TripDto(x)).toList(),
+                        queryResult.stream().map(x -> new TripDto(x)).toList(),
                         queryResult.getNumber(),
                         queryResult.getSize(),
                         queryResult.getTotalPages(),

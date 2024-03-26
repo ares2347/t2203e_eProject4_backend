@@ -42,7 +42,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(name = "/ticket/my-tickets")
+    @GetMapping("/ticket/my-tickets")
     public ResponseEntity getCurrentUserTickets(@RequestParam(name = "startDate") LocalDate startDate,
                                                 @RequestParam(name = "pickupPoint") String pickupPoint,
                                                 @RequestParam(name = "dropoffPoint") String dropoffPoint,
@@ -56,7 +56,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(name = "/ticket/book-tickets", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/ticket/book-tickets", consumes = "application/json", produces = "application/json")
     public ResponseEntity bookTickets(BookTicketRequest request) {
         try {
             List<TicketDto> res = _ticketService.bookTickets(request);
