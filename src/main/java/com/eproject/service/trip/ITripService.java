@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 public interface ITripService {
-    RouteEntity createNewRoute(CreateRouteRequest request);
+    RouteEntity createNewRoute(CreateRouteRequest request) throws Exception;
 
     PageDto<RouteDto> getRoutesByCurrentUser(int page, int size);
     PageDto<TripDto> getTripsByCurrentUser(int page, int size);

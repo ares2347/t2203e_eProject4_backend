@@ -6,6 +6,7 @@ import com.eproject.data.dto.trip.TripDto;
 import com.eproject.service.referencedata.ReferenceDataService;
 import com.eproject.service.storage.StorageService;
 import com.eproject.service.trip.ITripService;
+import com.eproject.service.trip.TripService;
 import com.eproject.webapi.BaseResponse;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @RequestMapping("/api/public")
 public class PublicController {
     @Autowired
-    private ITripService _tripService;
+    private TripService _tripService;
     @Autowired
     private StorageService _storageService;
     @Autowired

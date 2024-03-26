@@ -44,7 +44,7 @@ public class TripService implements ITripService {
     private JwtService _jwtService;
 
     @Override
-    public RouteEntity createNewRoute(CreateRouteRequest request) {
+    public RouteEntity createNewRoute(CreateRouteRequest request) throws Exception {
         try {
             UserEntity user = _jwtService.getCurrentUser();
             Optional<UserEntity> userEntity = _userRepository.findById(user.getUserId());
@@ -59,11 +59,11 @@ public class TripService implements ITripService {
                 return null;
             }
         } catch (Exception ex) {
-            return null;
+            throw ex;
         }
     }
 
-    public List<TripEntity> addTripToRoute(RouteEntity route) {
+    public List<TripEntity> addTripToRoute(RouteEntity route) throws Exception {
         List<TripEntity> trips = new ArrayList<>();
         List<LocalDate> remainsDaysOfMonth = LocalDate.now()
                 .datesUntil(LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1))
@@ -73,10 +73,10 @@ public class TripService implements ITripService {
                 (route.getRouteDuration().getHour() * 60 * 60 + route.getRouteDuration().getMinute() * 60 + route.getRouteDuration().getSecond()) +
                         (route.getGapDurationBetweenTrip().getHour() * 60 * 60 + route.getGapDurationBetweenTrip().getMinute() * 60 + route.getGapDurationBetweenTrip().getSecond());
         int gapDurationBetweenRoute = route.getGapDurationBetweenRoute().getHour() * 60 * 60 + route.getGapDurationBetweenRoute().getMinute() * 60 + route.getGapDurationBetweenRoute().getSecond();
-        int numberOfVehicleNeededForOneCycle = (BigDecimal.valueOf(totalRouteDuration).divide(BigDecimal.valueOf(gapDurationBetweenRoute)).setScale(0, RoundingMode.FLOOR)).intValueExact();
+        int numberOfVehicleNeededForOneCycle = (BigDecimal.valueOf(totalRouteDuration).divide(BigDecimal.valueOf(gapDurationBetweenRoute),0, RoundingMode.FLOOR)).intValueExact();
 
-        LinkedList<VehicleEntity> vehiclesInStart = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getStartStation()));
-        LinkedList<VehicleEntity> vehiclesInEnd = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getEndStation()));
+        LinkedList<VehicleEntity> vehiclesInStart = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getStartCity()));
+        LinkedList<VehicleEntity> vehiclesInEnd = new LinkedList<>(_vehicleRepository.findAllByCurrentStationAndPreviousStationNull(route.getEndCity()));
 
         if ((long) vehiclesInStart.size() >= numberOfVehicleNeededForOneCycle && (long) vehiclesInEnd.size() >= numberOfVehicleNeededForOneCycle) {
             for (LocalDate day : remainsDaysOfMonth) {
@@ -116,10 +116,10 @@ public class TripService implements ITripService {
                         vehiclesInStart.addLast(endVehicle);
                         trips.add(new TripEntity(
                                 TripStatusEnum.WAITING,
-                                route.getStartCity(),
-                                route.getStartStation(),
                                 route.getEndCity(),
                                 route.getEndStation(),
+                                route.getStartCity(),
+                                route.getStartStation(),
                                 startTimeFromEnd,
                                 day,
                                 route.getRouteDuration(),
@@ -136,6 +136,9 @@ public class TripService implements ITripService {
                             .plusSeconds(route.getGapDurationBetweenRoute().getSecond());
                 } while (!startTimeFromEnd.isAfter(latestStartTimeFromEnd));
             }
+        }
+        else {
+            throw new Exception("Số lượng xe không đủ để tạo chuyến tương ứng");
         }
         return _tripRepository.saveAll(trips);
     }

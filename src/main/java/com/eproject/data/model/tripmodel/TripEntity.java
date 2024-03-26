@@ -70,7 +70,7 @@ public class TripEntity extends BaseEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime routeDuration;
 
-    @Column(name = "stations_mapping", nullable = false)
+    @Column(name = "stations_mapping",length = 10000000, nullable = false)
     private String stationsMapping;
 
     @Column(name = "vehicle_type", nullable = false)

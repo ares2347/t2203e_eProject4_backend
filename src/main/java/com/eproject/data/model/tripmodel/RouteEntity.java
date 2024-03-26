@@ -62,7 +62,7 @@ public class RouteEntity extends BaseEntity {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime gapDurationBetweenRoute;
 
-    @Column(name = "stations_mapping", nullable = false)
+    @Column(name = "stations_mapping", length = 10000000, nullable = false)
     private String stationsMapping;
 
     @Column(name = "vehicle_type", nullable = false)

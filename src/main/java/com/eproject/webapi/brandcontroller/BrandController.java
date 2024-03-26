@@ -40,7 +40,7 @@ public class BrandController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            return new ResponseEntity<>(new BaseResponse("Tạo lộ trình thất bại."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new BaseResponse("Tạo lộ trình thất bại. " + ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
